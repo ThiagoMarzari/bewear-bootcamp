@@ -8,6 +8,8 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Input } from "@/components/ui/input";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { authClient } from "@/lib/auth-client";
+import { toast } from "sonner";
 
 const formSchema = z.object({
   email: z.email("Email inválido"),
@@ -26,7 +28,22 @@ export function SignInForm() {
     },
   })
 
-  function onSubmit(data: FormSchema) {
+  async function onSubmit(data: FormSchema) {
+
+    await authClient.signIn.email({
+      email: data.email,
+      password: data.password,
+      callbackURL: "/",
+    }, {
+      onSuccess: () => {
+        toast.success("Conta criada com sucesso")
+      },
+      onError: (error) => {
+        toast.error("Ocorreu um erro ao fazer login")
+      },
+
+    })
+
 
     console.log(data)
   }

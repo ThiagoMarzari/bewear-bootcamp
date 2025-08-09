@@ -8,6 +8,9 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { authClient } from "@/lib/auth-client";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 
 const formSchema = z.object({
@@ -26,6 +29,7 @@ type FormSchema = z.infer<typeof formSchema>
 
 
 export function SignUpForm() {
+  const router = useRouter()
   const form = useForm<FormSchema>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -36,8 +40,26 @@ export function SignUpForm() {
     },
   })
 
-  function onSubmit(data: FormSchema) {
-    console.log(data)
+  async function onSubmit(data: FormSchema) {
+
+    await authClient.signUp.email({
+      name: data.name,
+      email: data.email,
+      password: data.password,
+    }, {
+      onRequest: (ctx) => {
+        //show loading
+      },
+      onSuccess: () => {
+        toast.success("Conta criada com sucesso")
+        router.push("/")
+
+      },
+      onError: (error) => {
+        toast.error(error.error.message)
+      },
+    })
+
   }
 
   return (
