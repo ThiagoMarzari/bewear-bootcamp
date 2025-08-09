@@ -79,7 +79,7 @@ export const productRelations = relations(productTable, ({ one, many }) => ({
 
 export const productVariantTable = pgTable("product_variant", {
   id: uuid().primaryKey().defaultRandom(),
-  productId: uuid("product_id").notNull().references(() => productTable.id),
+  productId: uuid("product_id").notNull().references(() => productTable.id, { onDelete: "cascade" }),
   slug: text().notNull(),
   name: text().notNull(),
   color: text().notNull(),
