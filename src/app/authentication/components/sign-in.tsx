@@ -10,6 +10,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { authClient } from "@/lib/auth-client";
 import { toast } from "sonner";
+import { useState } from "react";
 
 const formSchema = z.object({
   email: z.email("Email inválido"),
@@ -19,6 +20,8 @@ const formSchema = z.object({
 type FormSchema = z.infer<typeof formSchema>
 
 export function SignInForm() {
+  const [loading, setLoading] = useState(false)
+
 
   const form = useForm<FormSchema>({
     resolver: zodResolver(formSchema),
@@ -29,6 +32,7 @@ export function SignInForm() {
   })
 
   async function onSubmit(data: FormSchema) {
+    setLoading(true)
 
     await authClient.signIn.email({
       email: data.email,
@@ -36,16 +40,15 @@ export function SignInForm() {
       callbackURL: "/",
     }, {
       onSuccess: () => {
-        toast.success("Conta criada com sucesso")
+        toast.success("Login realizado com sucesso")
+        setLoading(false)
       },
       onError: (error) => {
         toast.error("Ocorreu um erro ao fazer login")
+        setLoading(false)
       },
 
     })
-
-
-    console.log(data)
   }
 
   return (
@@ -88,7 +91,9 @@ export function SignInForm() {
               />
             </CardContent>
             <CardFooter>
-              <Button type="submit">Entrar</Button>
+              <Button type="submit" disabled={loading}>
+                {loading ? "Entrando..." : "Entrar"}
+              </Button>
             </CardFooter>
           </form>
         </Form>

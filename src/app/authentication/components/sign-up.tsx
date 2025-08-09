@@ -10,7 +10,7 @@ import { Input } from "@/components/ui/input";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { authClient } from "@/lib/auth-client";
 import { toast } from "sonner";
-import { useRouter } from "next/navigation";
+import { useState } from "react";
 
 
 const formSchema = z.object({
@@ -29,7 +29,8 @@ type FormSchema = z.infer<typeof formSchema>
 
 
 export function SignUpForm() {
-  const router = useRouter()
+  const [loading, setLoading] = useState(false)
+
   const form = useForm<FormSchema>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -41,21 +42,22 @@ export function SignUpForm() {
   })
 
   async function onSubmit(data: FormSchema) {
+    setLoading(true)
+
 
     await authClient.signUp.email({
       name: data.name,
       email: data.email,
       password: data.password,
+      callbackURL: "/",
+
     }, {
-      onRequest: (ctx) => {
-        //show loading
-      },
       onSuccess: () => {
         toast.success("Conta criada com sucesso")
-        router.push("/")
-
+        setLoading(false)
       },
       onError: (error) => {
+        setLoading(false)
         toast.error(error.error.message)
       },
     })
@@ -133,7 +135,10 @@ export function SignUpForm() {
 
             </CardContent>
             <CardFooter>
-              <Button type="submit">Criar conta</Button>
+              <Button type="submit" disabled={loading}>
+                {loading ? "Carregando..." : "Criar conta"}
+              </Button>
+
             </CardFooter>
           </form>
         </Form>
