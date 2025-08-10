@@ -15,7 +15,7 @@ export function ProductItem({ product, textContainerClassname }: ProductProps) {
   const firstVariant = product.variants[0];
   return (
     <Link
-      href={`/`}
+      href={`/product-variant/${firstVariant.slug}`}
       className="flex w-[200px] flex-shrink-0 flex-col gap-4 transition-transform hover:scale-[1.02] lg:w-full"
     >
       <div className="relative overflow-hidden rounded-2xl bg-gray-50 lg:rounded-3xl">
