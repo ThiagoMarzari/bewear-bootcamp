@@ -1,5 +1,6 @@
 import { categoryTable } from "@/db/schema";
 import { Button } from "../ui/button";
+import Link from "next/link";
 
 interface CategorySelectorProps {
   categories: (typeof categoryTable.$inferSelect)[];
@@ -13,9 +14,10 @@ export function CategorySelector({ categories }: CategorySelectorProps) {
           <Button
             key={category.id}
             variant="ghost"
+            asChild
             className="h-12 cursor-pointer rounded-xl bg-white/60 font-medium shadow-sm backdrop-blur-sm transition-all hover:scale-105 hover:bg-white hover:shadow-md lg:h-14 lg:text-base"
           >
-            {category.name}
+            <Link href={`/category/${category.slug}`}>{category.name}</Link>
           </Button>
         ))}
       </div>
