@@ -13,10 +13,12 @@ interface ProductProps {
 export function ProductList({ title, products }: ProductProps) {
   return (
     <div className="space-y-6">
-      <h3 className="text-2xl font-semibold md:text-3xl">{title}</h3>
-      {products.map((product) => (
-        <ProductItem key={product.id} product={product} />
-      ))}
+      <h3 className="px-5 text-2xl font-semibold md:text-3xl">{title}</h3>
+      <div className="flex w-full gap-4 overflow-x-auto px-5 [&::-webkit-scrollbar]:hidden">
+        {products.map((product) => (
+          <ProductItem key={product.id} product={product} />
+        ))}
+      </div>
     </div>
   );
 }

@@ -10,26 +10,30 @@ export default async function Home() {
   });
   console.log(products);
   return (
-    <div className="space-y-6 px-5">
-      <Image
-        src="/banner-01.png"
-        alt="banner"
-        width={0}
-        height={0}
-        sizes="100vw"
-        className="h-auto w-full"
-      />
+    <div className="space-y-6">
+      <div className="px-5">
+        <Image
+          src="/banner-01.png"
+          alt="banner"
+          width={0}
+          height={0}
+          sizes="100vw"
+          className="h-auto w-full"
+        />
+      </div>
 
       <ProductList title="Mais vendidos" products={products} />
 
-      <Image
-        src="/banner-02.png"
-        alt="banner"
-        width={0}
-        height={0}
-        sizes="100vw"
-        className="h-auto w-full"
-      />
+      <div className="px-5">
+        <Image
+          src="/banner-02.png"
+          alt="banner"
+          width={0}
+          height={0}
+          sizes="100vw"
+          className="h-auto w-full"
+        />
+      </div>
     </div>
   );
 }
