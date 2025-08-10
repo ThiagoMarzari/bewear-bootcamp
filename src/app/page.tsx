@@ -1,4 +1,5 @@
 import { CategorySelector } from "@/components/common/category-selector";
+import { PartnerBrandList } from "@/components/common/partner-brand-list";
 import { ProductList } from "@/components/common/products-list";
 import { db } from "@/db";
 import { productTable } from "@/db/schema";
@@ -30,9 +31,11 @@ export default async function Home() {
           width={0}
           height={0}
           sizes="100vw"
-          className="h-auto w-full"
+          className="mx-auto h-auto w-full max-w-2xl rounded-3xl object-cover md:h-[600px]"
         />
       </div>
+
+      <PartnerBrandList />
 
       <ProductList title="Mais vendidos" products={products} />
 
