@@ -23,15 +23,26 @@ export default async function Home() {
   const categories = await db.query.categoryTable.findMany();
   console.log(products);
   return (
-    <div className="space-y-6">
-      <div className="px-5">
+    <div className="mx-auto max-w-7xl space-y-8 lg:space-y-12">
+      <div className="px-5 lg:hidden lg:px-8">
         <Image
           src="/banner-01.png"
           alt="banner"
           width={0}
           height={0}
-          sizes="100vw"
-          className="mx-auto h-auto w-full max-w-2xl rounded-3xl object-cover md:h-[600px]"
+          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 70vw"
+          className="mx-auto h-auto w-full max-w-4xl rounded-2xl object-cover md:h-[500px] lg:h-[600px] lg:rounded-3xl"
+        />
+      </div>
+
+      <div className="hidden px-5 lg:block lg:px-8">
+        <Image
+          src="/banner-01-desktop.png"
+          alt="banner"
+          width={0}
+          height={0}
+          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 70vw"
+          className="mx-auto h-auto w-full rounded-2xl object-cover lg:h-[600px] lg:rounded-3xl"
         />
       </div>
 
@@ -39,18 +50,18 @@ export default async function Home() {
 
       <ProductList title="Mais vendidos" products={products} />
 
-      <div className="px-5">
+      <div className="px-5 lg:px-8">
         <CategorySelector categories={categories} />
       </div>
 
-      <div className="px-5">
+      <div className="px-5 lg:px-8">
         <Image
           src="/banner-02.png"
           alt="banner"
           width={0}
           height={0}
-          sizes="100vw"
-          className="h-auto w-full"
+          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 70vw"
+          className="mx-auto h-auto w-full max-w-4xl rounded-2xl object-cover lg:rounded-3xl"
         />
       </div>
 

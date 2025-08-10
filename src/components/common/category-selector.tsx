@@ -7,16 +7,15 @@ interface CategorySelectorProps {
 
 export function CategorySelector({ categories }: CategorySelectorProps) {
   return (
-    <div className="rounded-3xl bg-[#f4efff] p-4">
-      <div className="grid grid-cols-2 gap-3">
+    <div className="rounded-2xl bg-gradient-to-br from-purple-50 to-indigo-50 p-6 lg:rounded-3xl lg:p-8">
+      <div className="grid grid-cols-2 gap-3 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6">
         {categories.map((category) => (
           <Button
             key={category.id}
             variant="ghost"
-            className="cursor-pointer hover:bg-[#f4efff]"
+            className="h-12 cursor-pointer rounded-xl bg-white/60 font-medium shadow-sm backdrop-blur-sm transition-all hover:scale-105 hover:bg-white hover:shadow-md lg:h-14 lg:text-base"
           >
             {category.name}
-            {/* Comentário de teste */}
           </Button>
         ))}
       </div>
