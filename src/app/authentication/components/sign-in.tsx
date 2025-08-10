@@ -26,6 +26,7 @@ import { LoadingSpinner } from "@/components/ui/loading-spinner";
 import { authClient } from "@/lib/auth-client";
 import { toast } from "sonner";
 import { useState } from "react";
+import Image from "next/image";
 
 const formSchema = z.object({
   email: z.email("Email inválido"),
@@ -65,6 +66,13 @@ export function SignInForm() {
         },
       },
     );
+  }
+
+  async function handleSignWithGoogle() {
+    await authClient.signIn.social({
+      provider: "google",
+      callbackURL: "/",
+    });
   }
 
   return (
@@ -113,7 +121,7 @@ export function SignInForm() {
                 )}
               />
             </CardContent>
-            <CardFooter>
+            <CardFooter className="flex flex-col gap-4">
               <Button type="submit" disabled={loading} className="w-full">
                 {loading ? (
                   <>
@@ -122,6 +130,29 @@ export function SignInForm() {
                   </>
                 ) : (
                   "Entrar"
+                )}
+              </Button>
+
+              {/* GOOGLE */}
+              <Button
+                disabled={loading}
+                variant="outline"
+                className="w-full"
+                onClick={handleSignWithGoogle}
+                type="button"
+              >
+                {loading ? (
+                  <>
+                    <LoadingSpinner size="sm" className="mr-2" />
+                    Entrando...
+                  </>
+                ) : (
+                  <Image
+                    src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Google_%22G%22_logo.svg/2048px-Google_%22G%22_logo.svg.png"
+                    alt="google"
+                    width={24}
+                    height={24}
+                  />
                 )}
               </Button>
             </CardFooter>

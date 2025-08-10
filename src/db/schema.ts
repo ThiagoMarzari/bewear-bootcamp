@@ -1,5 +1,12 @@
 import { relations } from "drizzle-orm";
-import { boolean, integer, pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core";
+import {
+  boolean,
+  integer,
+  pgTable,
+  text,
+  timestamp,
+  uuid,
+} from "drizzle-orm/pg-core";
 
 export const userTable = pgTable("user", {
   id: text("id").primaryKey(),
@@ -48,50 +55,68 @@ export const accountTable = pgTable("account", {
   updatedAt: timestamp("updated_at").notNull(),
 });
 
+export const verificationTable = pgTable("verification", {
+  id: text("id").primaryKey(),
+  identifier: text("identifier").notNull(),
+  value: text("value").notNull(),
+  expiresAt: timestamp("expires_at").notNull(),
+  createdAt: timestamp("created_at").$defaultFn(
+    () => /* @__PURE__ */ new Date(),
+  ),
+  updatedAt: timestamp("updated_at").$defaultFn(
+    () => /* @__PURE__ */ new Date(),
+  ),
+});
 
 export const categoryTable = pgTable("category", {
   id: uuid().primaryKey().defaultRandom(),
   name: text().notNull(),
   slug: text().notNull().unique(),
-  createdAt: timestamp("created_at").notNull().defaultNow()
-})
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+});
 
 export const categoryRelations = relations(categoryTable, ({ many }) => ({
-  products: many(productTable)
-}))
+  products: many(productTable),
+}));
 
 export const productTable = pgTable("product", {
   id: uuid().primaryKey().defaultRandom(),
-  categoryId: uuid("category_id").notNull().references(() => categoryTable.id, { onDelete: "set null" }),
+  categoryId: uuid("category_id")
+    .notNull()
+    .references(() => categoryTable.id, { onDelete: "set null" }),
   name: text().notNull(),
   slug: text().notNull().unique(), // Unique slug for product
   description: text().notNull(),
-  createdAt: timestamp("created_at").notNull().defaultNow()
-})
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+});
 
 export const productRelations = relations(productTable, ({ one, many }) => ({
   category: one(categoryTable, {
     fields: [productTable.categoryId],
-    references: [categoryTable.id]
+    references: [categoryTable.id],
   }),
-  variants: many(productVariantTable)
-}))
+  variants: many(productVariantTable),
+}));
 
 export const productVariantTable = pgTable("product_variant", {
   id: uuid().primaryKey().defaultRandom(),
-  productId: uuid("product_id").notNull().references(() => productTable.id, { onDelete: "cascade" }),
+  productId: uuid("product_id")
+    .notNull()
+    .references(() => productTable.id, { onDelete: "cascade" }),
   slug: text().notNull(),
   name: text().notNull(),
   color: text().notNull(),
   priceInCents: integer("price_in_cents").notNull(),
   imageUrl: text("image_url").notNull(),
-  createdAt: timestamp("created_at").notNull().defaultNow()
-})
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+});
 
-export const productVariantRelations = relations(productVariantTable, ({ one }) => ({
-  product: one(productTable, {
-    fields: [productVariantTable.productId],
-    references: [productTable.id]
-  })
-}))
-
+export const productVariantRelations = relations(
+  productVariantTable,
+  ({ one }) => ({
+    product: one(productTable, {
+      fields: [productVariantTable.productId],
+      references: [productTable.id],
+    }),
+  }),
+);
