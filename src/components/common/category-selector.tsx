@@ -16,6 +16,7 @@ export function CategorySelector({ categories }: CategorySelectorProps) {
             className="cursor-pointer hover:bg-[#f4efff]"
           >
             {category.name}
+            {/* Comentário de teste */}
           </Button>
         ))}
       </div>
