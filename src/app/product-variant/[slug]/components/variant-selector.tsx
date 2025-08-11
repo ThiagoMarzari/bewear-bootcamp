@@ -2,7 +2,7 @@
 
 import { productVariantTable } from "@/db/schema";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 
 interface VariantSelectorProps {
   selectedVariantSlug: string;
@@ -14,9 +14,14 @@ export function VariantSelector({
   selectedVariantSlug,
 }: VariantSelectorProps) {
   const router = useRouter();
+  const searchParams = useSearchParams();
 
   function handleSelect(slug: string) {
-    router.push(`/product-variant/${slug}`, { scroll: false });
+    const params = new URLSearchParams(searchParams);
+
+    router.push(`/product-variant/${slug}?${params.toString()}`, {
+      scroll: false,
+    });
   }
 
   return (

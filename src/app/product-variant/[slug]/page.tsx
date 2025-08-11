@@ -7,6 +7,7 @@ import { eq } from "drizzle-orm";
 import Image from "next/image";
 import { notFound } from "next/navigation";
 import { VariantSelector } from "./components/variant-selector";
+import QuantitySelector from "./components/quantity-selector";
 
 interface ProductVariantPageProps {
   params: Promise<{
@@ -79,7 +80,9 @@ export default async function ProductVariantPage({
       </div>
 
       {/* Quantidade */}
-      <div className="px-5"></div>
+      <div className="px-5">
+        <QuantitySelector />
+      </div>
 
       {/* Adicionar ao carrinho */}
       <div className="flex flex-col space-y-4 px-5">

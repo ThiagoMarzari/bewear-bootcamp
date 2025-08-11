@@ -33,13 +33,9 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
   return (
     <div className="mx-auto flex w-full max-w-7xl flex-col gap-6 p-5">
       <h2 className="text-2xl font-semibold">{category.name}</h2>
-      <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4">
+      <div className="grid grid-cols-1 justify-items-center gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
         {products.map((product) => (
-          <ProductItem
-            product={product}
-            key={product.id}
-            textContainerClassname="w-full"
-          />
+          <ProductItem product={product} key={product.id} />
         ))}
       </div>
     </div>

@@ -16,16 +16,18 @@ export function ProductItem({ product, textContainerClassname }: ProductProps) {
   return (
     <Link
       href={`/product-variant/${firstVariant.slug}`}
-      className="flex w-[200px] flex-shrink-0 flex-col gap-4 transition-transform hover:scale-[1.02] lg:w-full"
+      className="flex flex-col gap-4 transition-transform hover:scale-[1.02]"
     >
-      <div className="relative overflow-hidden rounded-2xl bg-gray-50 lg:rounded-3xl">
+      <div className="relative min-w-[200px] overflow-hidden rounded-2xl bg-gray-50 lg:rounded-3xl">
         <Image
           src={firstVariant.imageUrl}
           alt={firstVariant.name}
-          sizes="(max-width: 768px) 200px, (max-width: 1024px) 300px, 400px"
-          width={400}
-          height={400}
-          className="aspect-square w-full object-cover transition-transform group-hover:scale-105"
+          sizes="(max-width: 640px) 90vw, (max-width: 1024px) 45vw, 30vw"
+          width={300}
+          height={300}
+          className={cn(
+            "aspect-square w-full object-cover transition-all duration-300 group-hover:scale-105",
+          )}
         />
       </div>
 
