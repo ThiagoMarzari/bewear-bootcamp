@@ -1,3 +1,4 @@
+import { ProductList } from "@/components/common/products-list";
 import { Button } from "@/components/ui/button";
 import { db } from "@/db";
 import { productTable } from "@/db/schema";
@@ -5,6 +6,7 @@ import { formatCurrency } from "@/utils/money";
 import { eq } from "drizzle-orm";
 import Image from "next/image";
 import { notFound } from "next/navigation";
+import { VariantSelector } from "./components/variant-selector";
 
 interface ProductVariantPageProps {
   params: Promise<{
@@ -20,7 +22,11 @@ export default async function ProductVariantPage({
   const productVariant = await db.query.productVariantTable.findFirst({
     where: eq(productTable.slug, slug),
     with: {
-      product: true,
+      product: {
+        with: {
+          variants: true,
+        },
+      },
     },
   });
 
@@ -30,6 +36,9 @@ export default async function ProductVariantPage({
 
   const likelyProducts = await db.query.productTable.findMany({
     where: eq(productTable.categoryId, productVariant.product.categoryId),
+    with: {
+      variants: true,
+    },
   });
 
   return (
@@ -47,7 +56,12 @@ export default async function ProductVariantPage({
         />
       </div>
       {/* VARIANTS */}
-      <div className="px-5"></div>
+      <div className="px-5">
+        <VariantSelector
+          selectedVariant={productVariant.slug}
+          variants={productVariant.product.variants}
+        />
+      </div>
 
       {/* Detalhes */}
       <div className="space-y-4 px-5">
@@ -78,6 +92,8 @@ export default async function ProductVariantPage({
       <div className="px-5">
         <p className="text-sm">{productVariant.product.description}</p>
       </div>
+
+      <ProductList title="Produtos relacionados" products={likelyProducts} />
     </div>
   );
 }
