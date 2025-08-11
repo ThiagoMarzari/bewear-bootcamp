@@ -48,7 +48,7 @@ export function PartnerBrandList() {
             key={brand.title}
             className="flex w-24 min-w-24 flex-col items-center gap-2 md:w-28 md:min-w-28 lg:w-32 lg:min-w-32"
           >
-            <div className="flex h-24 w-24 items-center justify-center rounded-3xl border bg-white/50 backdrop-blur-sm transition-colors hover:border-black/50 md:h-28 md:w-28 lg:h-32 lg:w-32">
+            <div className="flex h-24 w-24 items-center justify-center rounded-3xl border bg-white/50 md:h-28 md:w-28 lg:h-32 lg:w-32">
               <Image
                 src={brand.image}
                 alt={brand.title}
