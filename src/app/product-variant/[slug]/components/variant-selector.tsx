@@ -1,32 +1,41 @@
+"use client";
+
 import { productVariantTable } from "@/db/schema";
 import Image from "next/image";
-import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 interface VariantSelectorProps {
-  selectedVariant: string;
+  selectedVariantSlug: string;
   variants: (typeof productVariantTable.$inferSelect)[];
 }
 
 export function VariantSelector({
   variants,
-  selectedVariant,
+  selectedVariantSlug,
 }: VariantSelectorProps) {
+  const router = useRouter();
+
+  function handleSelect(slug: string) {
+    router.push(`/product-variant/${slug}`, { scroll: false });
+  }
+
   return (
     <div className="flex items-center gap-4">
       {variants.map((variant) => (
-        <Link
+        <button
           key={variant.id}
-          href={`/product-variant/${variant.slug}`}
-          className="transition-transform hover:scale-105"
+          onClick={() => handleSelect(variant.slug)}
+          className="cursor-pointer transition-transform hover:scale-105"
         >
           <Image
             src={variant.imageUrl}
             alt={variant.name}
             width={68}
             height={68}
-            className={`rounded-2xl ${variant.slug === selectedVariant ? "border-primary border-2" : ""}`}
+            loading="lazy"
+            className={`rounded-2xl ${variant.slug === selectedVariantSlug ? "border-primary border-2" : ""}`}
           />
-        </Link>
+        </button>
       ))}
     </div>
   );

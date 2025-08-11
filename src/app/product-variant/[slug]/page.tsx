@@ -58,7 +58,7 @@ export default async function ProductVariantPage({
       {/* VARIANTS */}
       <div className="px-5">
         <VariantSelector
-          selectedVariant={productVariant.slug}
+          selectedVariantSlug={productVariant.slug}
           variants={productVariant.product.variants}
         />
       </div>
