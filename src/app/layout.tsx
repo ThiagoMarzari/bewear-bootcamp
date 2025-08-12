@@ -6,6 +6,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import { Header } from "@/components/common/header";
 import { Footer } from "@/components/common/footer";
 import { NuqsAdapter } from "nuqs/adapters/next/app";
+import ReactQueryProvider from "@/providers/react-query";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -35,7 +36,9 @@ export default function RootLayout({
         <div className="flex min-h-screen flex-col">
           <Header />
           <main className="flex-1">
-            <NuqsAdapter>{children}</NuqsAdapter>
+            <ReactQueryProvider>
+              <NuqsAdapter>{children}</NuqsAdapter>
+            </ReactQueryProvider>
           </main>
           <Footer />
         </div>
