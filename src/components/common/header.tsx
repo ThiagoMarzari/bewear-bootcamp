@@ -15,6 +15,7 @@ import {
 import { authClient } from "@/lib/auth-client";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import Link from "next/link";
+import Cart from "./cart";
 
 export function Header() {
   const { data: session } = authClient.useSession();
@@ -32,7 +33,9 @@ export function Header() {
           />
         </Link>
 
-        <div className="flex items-center">
+        <div className="flex items-center gap-2">
+          <Cart />
+
           <Sheet>
             <SheetTrigger asChild>
               <Button variant="outline" size="icon" className="h-10 w-10">
