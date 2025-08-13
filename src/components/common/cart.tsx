@@ -14,6 +14,7 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "../ui/sheet";
+import { CartItem } from "./cart-item";
 
 export default function Cart() {
   //Renomeando o data para cart
@@ -24,25 +25,34 @@ export default function Cart() {
   return (
     <Sheet>
       <SheetTrigger asChild>
-        <Button variant="ghost" size="icon" className="h-10 w-10">
+        <Button variant="ghost" size="icon" className="relative h-10 w-10">
           <ShoppingBasketIcon className="h-5 w-5" />
+          {/* Exibir a quantidade de itens no carrinho */}
+          {cart && cart.items.length > 0 && (
+            <div className="border-primary absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full border">
+              <p>
+                {cart.items.reduce((total, item) => total + item.quantity, 0)}
+              </p>
+            </div>
+          )}
         </Button>
       </SheetTrigger>
       <SheetContent>
         <SheetHeader>
           <SheetTitle>Carrinho</SheetTitle>
         </SheetHeader>
-        <div>
+        <div className="space-y-4 px-5">
           {cartIsLoading && <div>Loading...</div>}
           {cart?.items.map((item) => (
-            <div key={item.id}>
-              <Image
-                src={item.productVariant.imageUrl}
-                alt={item.productVariant.name}
-                width={100}
-                height={100}
-              />
-            </div>
+            <CartItem
+              key={item.id}
+              id={item.id}
+              productName={item.productVariant.product.name}
+              productVariantName={item.productVariant.name}
+              productVariantImageUrl={item.productVariant.imageUrl}
+              productVariantPriceInCents={item.productVariant.priceInCents}
+              quantity={item.quantity}
+            />
           ))}
         </div>
       </SheetContent>
