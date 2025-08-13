@@ -3,13 +3,11 @@ import Image from "next/image";
 import { notFound } from "next/navigation";
 
 import { ProductList } from "@/components/common/products-list";
-import { Button } from "@/components/ui/button";
 import { db } from "@/db";
 import { productTable } from "@/db/schema";
 import { formatCurrency } from "@/utils/money";
 
-import AddToCartButton from "./components/add-to-cart-button";
-import QuantitySelector from "./components/quantity-selector";
+import ProductActions from "./components/product-actions";
 import { VariantSelector } from "./components/variant-selector";
 
 interface ProductVariantPageProps {
@@ -82,16 +80,7 @@ export default async function ProductVariantPage({
         </p>
       </div>
 
-      {/* Quantidade */}
-      <div className="px-5">
-        <QuantitySelector />
-      </div>
-
-      {/* Adicionar ao carrinho */}
-      <div className="flex flex-col space-y-4 px-5">
-        <AddToCartButton productVariantId={productVariant.id} quantity={1} />
-        <Button className="rounded-full">Comprar agora</Button>
-      </div>
+      <ProductActions productVariantId={productVariant.id} />
 
       <div className="px-5">
         <p className="text-sm">{productVariant.product.description}</p>

@@ -1,6 +1,6 @@
 "use client";
 
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Loader2 } from "lucide-react";
 
 import { addProductToCart } from "@/actions/add-cart-product";
@@ -15,6 +15,7 @@ export default function AddToCartButton({
   productVariantId,
   quantity,
 }: AddToCartButtonProps) {
+  const queryClient = useQueryClient();
   const { mutate, isPending } = useMutation({
     mutationKey: ["add-to-cart", productVariantId, quantity],
     mutationFn: () =>
@@ -22,6 +23,11 @@ export default function AddToCartButton({
         productVariantId,
         quantity,
       }),
+    onSuccess: () => {
+      // Ele atualiza o carrinho com base na chave que passei, ele refaz todas as
+      //queries que tem essa chave
+      queryClient.invalidateQueries({ queryKey: ["cart"] });
+    },
   });
 
   return (
