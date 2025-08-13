@@ -1,10 +1,16 @@
 "use client";
 
+import { useQuery } from "@tanstack/react-query";
 import { ShoppingBasketIcon } from "lucide-react";
+
 import { Button } from "../ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "../ui/sheet";
 
 export default function Cart() {
+  useQuery({
+    queryKey: ["cart"],
+    queryFn: async () => {},
+  });
   return (
     <Sheet>
       <SheetTrigger asChild>

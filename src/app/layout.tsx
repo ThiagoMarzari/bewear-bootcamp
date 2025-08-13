@@ -1,11 +1,12 @@
-import { Toaster } from "@/components/ui/sonner";
 import "./globals.css";
 
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
-import { Header } from "@/components/common/header";
-import { Footer } from "@/components/common/footer";
 import { NuqsAdapter } from "nuqs/adapters/next/app";
+
+import { Footer } from "@/components/common/footer";
+import { Header } from "@/components/common/header";
+import { Toaster } from "@/components/ui/sonner";
 import ReactQueryProvider from "@/providers/react-query";
 
 const geistSans = Geist({
