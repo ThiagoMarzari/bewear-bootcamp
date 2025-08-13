@@ -14,7 +14,30 @@ export async function getCart() {
   const cart = await db.query.cartTable.findFirst({
     where: eq(cartTable.userId, session.user.id),
     with: {
-      items: 
+      items: {
+        with: {
+          productVariant: {
+            with: {
+              product: true,
+            },
+          },
+        },
+      },
     },
   });
+
+  if (!cart) {
+    const [newCart] = await db
+      .insert(cartTable)
+      .values({
+        userId: session.user.id,
+      })
+      .returning();
+    return {
+      ...newCart,
+      items: [],
+    };
+  }
+
+  return cart;
 }

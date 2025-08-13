@@ -1,13 +1,16 @@
+import { eq } from "drizzle-orm";
+import Image from "next/image";
+import { notFound } from "next/navigation";
+
 import { ProductList } from "@/components/common/products-list";
 import { Button } from "@/components/ui/button";
 import { db } from "@/db";
 import { productTable } from "@/db/schema";
 import { formatCurrency } from "@/utils/money";
-import { eq } from "drizzle-orm";
-import Image from "next/image";
-import { notFound } from "next/navigation";
-import { VariantSelector } from "./components/variant-selector";
+
+import AddToCartButton from "./components/add-to-cart-button";
 import QuantitySelector from "./components/quantity-selector";
+import { VariantSelector } from "./components/variant-selector";
 
 interface ProductVariantPageProps {
   params: Promise<{
@@ -86,9 +89,7 @@ export default async function ProductVariantPage({
 
       {/* Adicionar ao carrinho */}
       <div className="flex flex-col space-y-4 px-5">
-        <Button className="rounded-full" variant="outline" size="lg">
-          Adicionar ao carrinho
-        </Button>
+        <AddToCartButton productVariantId={productVariant.id} quantity={1} />
         <Button className="rounded-full">Comprar agora</Button>
       </div>
 

@@ -34,15 +34,15 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} min-h-screen bg-white antialiased`}
       >
-        <div className="flex min-h-screen flex-col">
-          <Header />
-          <main className="flex-1">
-            <ReactQueryProvider>
+        <ReactQueryProvider>
+          <div className="flex min-h-screen flex-col">
+            <Header />
+            <main className="flex-1">
               <NuqsAdapter>{children}</NuqsAdapter>
-            </ReactQueryProvider>
-          </main>
-          <Footer />
-        </div>
+            </main>
+            <Footer />
+          </div>
+        </ReactQueryProvider>
         <Toaster position="top-center" />
       </body>
     </html>
