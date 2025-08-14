@@ -36,8 +36,24 @@ export async function getCart() {
     return {
       ...newCart,
       items: [],
+      totalPriceInCents: 0,
     };
   }
 
-  return cart;
+  // Retorno explicito
+  // return {
+  //   ...cart,
+  //   totalPriceInCents: cart.items.reduce((total, item) => {
+  //     return total + item.productVariant.priceInCents * item.quantity;
+  //   }, 0),
+  // };
+
+  //Mas temos o implicito
+  return {
+    ...cart,
+    totalPriceInCents: cart.items.reduce(
+      (total, item) => total + item.productVariant.priceInCents * item.quantity,
+      0,
+    ),
+  };
 }
