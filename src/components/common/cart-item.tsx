@@ -4,6 +4,9 @@ import Image from "next/image";
 import { formatCurrency } from "@/utils/money";
 
 import { Button } from "../ui/button";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { removeProductFromCart } from "@/actions/remove-cart-product";
+import { toast } from "sonner";
 
 interface CardItemProps {
   id: string;
@@ -22,6 +25,28 @@ export function CartItem({
   productVariantPriceInCents,
   quantity,
 }: CardItemProps) {
+  const queryClient = useQueryClient();
+  const removeProductFromCartMutation = useMutation({
+    mutationKey: ["remove-cart-product"],
+    mutationFn: () => removeProductFromCart({ cartItemId: id }),
+    onSuccess() {
+      queryClient.invalidateQueries({
+        queryKey: ["cart"],
+      });
+    },
+  });
+
+  const handleRemoveProductFromCart = () => {
+    removeProductFromCartMutation.mutate(undefined, {
+      onSuccess: () => {
+        toast.success("Produto removido do carrinho.");
+      },
+      onError: () => {
+        toast.error("Erro ao remover produto do carrinho.");
+      },
+    });
+  };
+
   return (
     <div className="flex items-center justify-between">
       <div className="flex items-center gap-3">
@@ -59,7 +84,11 @@ export function CartItem({
         </div>
       </div>
       <div className="flex flex-col items-end justify-center gap-1">
-        <Button variant="outline" size="icon">
+        <Button
+          variant="outline"
+          size="icon"
+          onClick={handleRemoveProductFromCart}
+        >
           <TrashIcon size="icon" />
         </Button>
 

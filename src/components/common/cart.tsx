@@ -90,7 +90,7 @@ export default function Cart() {
             </div>
           )}
         </div>
-        {cartIsLoading && <div>Loading...</div>}
+        {cartIsLoading && <div>...loading</div>}
       </SheetContent>
     </Sheet>
   );
