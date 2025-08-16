@@ -8,9 +8,11 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { removeProductFromCart } from "@/actions/remove-cart-product";
 import { toast } from "sonner";
 import { DecreaseCartProductQuantity } from "@/actions/decrease-cart-product-quantity";
+import { addProductToCart } from "@/actions/add-cart-product";
 interface CardItemProps {
   id: string;
   productName: string;
+  productVariantId: string;
   productVariantName: string;
   productVariantImageUrl: string;
   productVariantPriceInCents: number;
@@ -21,6 +23,7 @@ export function CartItem({
   id,
   productName,
   productVariantName,
+  productVariantId,
   productVariantImageUrl,
   productVariantPriceInCents,
   quantity,
@@ -46,6 +49,17 @@ export function CartItem({
     },
   });
 
+  const increaseCartProductQuantityMutation = useMutation({
+    mutationKey: ["increase-cart-product-quantity"],
+    mutationFn: () =>
+      addProductToCart({ productVariantId: productVariantId, quantity: 1 }),
+    onSuccess() {
+      queryClient.invalidateQueries({
+        queryKey: ["cart"],
+      });
+    },
+  });
+
   const handleRemoveProductFromCart = () => {
     removeProductFromCartMutation.mutate(undefined, {
       onSuccess: () => {
@@ -55,6 +69,10 @@ export function CartItem({
         toast.error("Erro ao remover produto do carrinho.");
       },
     });
+  };
+
+  const handleIncreaseQuantityClick = () => {
+    increaseCartProductQuantityMutation.mutate();
   };
 
   const handleDecreaseQuantityClick = () => {
@@ -90,7 +108,7 @@ export function CartItem({
               size="icon"
               className="h-4 w-4"
               variant="ghost"
-              onClick={() => {}}
+              onClick={handleIncreaseQuantityClick}
             >
               <PlusIcon />
             </Button>
