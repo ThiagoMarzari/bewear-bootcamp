@@ -1,4 +1,4 @@
-import { MinusIcon, PlusIcon, TrashIcon } from "lucide-react";
+import { MinusIcon, PlusIcon, ShipWheel, TrashIcon } from "lucide-react";
 import Image from "next/image";
 
 import { formatCurrency } from "@/utils/money";
@@ -103,7 +103,12 @@ export function CartItem({
             >
               <MinusIcon />
             </Button>
-            <p>{quantity}</p>
+            {increaseCartProductQuantityMutation.isPending ||
+            decreaseCartProductQuantityMutation.isPending ? (
+              <ShipWheel className="animate-spin" />
+            ) : (
+              <p>{quantity}</p>
+            )}
             <Button
               size="icon"
               className="h-4 w-4"
