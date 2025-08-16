@@ -5,16 +5,14 @@ import { Loader2 } from "lucide-react";
 
 import { addProductToCart } from "@/actions/add-cart-product";
 import { Button } from "@/components/ui/button";
+import { getUserCartQueryKey } from "@/hooks/queries/use-cart";
 
 interface AddToCartButtonProps {
   productVariantId: string;
   quantity: number;
 }
 
-export default function AddToCartButton({
-  productVariantId,
-  quantity,
-}: AddToCartButtonProps) {
+export default function AddToCartButton({ productVariantId, quantity }: AddToCartButtonProps) {
   const queryClient = useQueryClient();
   const { mutate, isPending } = useMutation({
     mutationKey: ["add-to-cart", productVariantId, quantity],
@@ -26,18 +24,12 @@ export default function AddToCartButton({
     onSuccess: () => {
       // Ele atualiza o carrinho com base na chave que passei, ele refaz todas as
       //queries que tem essa chave
-      queryClient.invalidateQueries({ queryKey: ["cart"] });
+      queryClient.invalidateQueries({ queryKey: getUserCartQueryKey() });
     },
   });
 
   return (
-    <Button
-      className="rounded-full"
-      variant="outline"
-      size="lg"
-      disabled={isPending}
-      onClick={() => mutate()}
-    >
+    <Button className="rounded-full" variant="outline" size="lg" disabled={isPending} onClick={() => mutate()}>
       {isPending && <Loader2 className="animate-spin" />}
       Adicionar ao carrinho
     </Button>
