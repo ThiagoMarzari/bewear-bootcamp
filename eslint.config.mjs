@@ -19,8 +19,25 @@ const eslintConfig = [
     rules: {
       "simple-import-sort/imports": "error",
       "simple-import-sort/exports": "error",
+      // Desabilita regras que podem reorganizar linhas de código
+      "@typescript-eslint/no-unused-vars": "warn",
+      "prefer-const": "off",
+      "no-multiple-empty-lines": "off",
+      "padded-blocks": "off",
+      "object-curly-newline": "off",
+      "function-paren-newline": "off",
+      "array-bracket-newline": "off",
+      "array-element-newline": "off",
     },
   },
 ];
+
+// Configuração adicional para preservar formatação
+eslintConfig.push({
+  rules: {
+    // Desabilita regras do Prettier que podem mover linhas
+    "prettier/prettier": "off",
+  },
+});
 
 export default eslintConfig;

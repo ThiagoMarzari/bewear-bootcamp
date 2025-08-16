@@ -10,6 +10,7 @@ import { toast } from "sonner";
 import { DecreaseCartProductQuantity } from "@/actions/decrease-cart-product-quantity";
 import { addProductToCart } from "@/actions/add-cart-product";
 import { useRemoveProductFromCartMutation } from "@/hooks/mutations/use-remove-product-from-cart";
+import { useDecreaseCartProductQuantityMutation } from "@/hooks/mutations/use-decrease-cart-product";
 interface CardItemProps {
   id: string;
   productName: string;
@@ -32,20 +33,11 @@ export function CartItem({
   const queryClient = useQueryClient();
   const removeProductFromCartMutation = useRemoveProductFromCartMutation(id);
 
-  const decreaseCartProductQuantityMutation = useMutation({
-    mutationKey: ["decrease-cart-product-quantity"],
-    mutationFn: () => DecreaseCartProductQuantity({ cartItemId: id }),
-    onSuccess() {
-      queryClient.invalidateQueries({
-        queryKey: ["cart"],
-      });
-    },
-  });
+  const decreaseCartProductQuantityMutation = useDecreaseCartProductQuantityMutation(id);
 
   const increaseCartProductQuantityMutation = useMutation({
     mutationKey: ["increase-cart-product-quantity"],
-    mutationFn: () =>
-      addProductToCart({ productVariantId: productVariantId, quantity: 1 }),
+    mutationFn: () => addProductToCart({ productVariantId: productVariantId, quantity: 1 }),
     onSuccess() {
       queryClient.invalidateQueries({
         queryKey: ["cart"],
@@ -75,56 +67,31 @@ export function CartItem({
   return (
     <div className="flex items-center justify-between">
       <div className="flex items-center gap-3">
-        <Image
-          src={productVariantImageUrl}
-          alt={productVariantName}
-          width={78}
-          height={78}
-          className="rounded-lg"
-        />
+        <Image src={productVariantImageUrl} alt={productVariantName} width={78} height={78} className="rounded-lg" />
         <div className="flex flex-col gap-1">
           <p className="text-sm font-semibold">{productName}</p>
-          <p className="text-muted-foreground text-xs font-medium">
-            {productVariantName}
-          </p>
+          <p className="text-muted-foreground text-xs font-medium">{productVariantName}</p>
           <div className="flex w-[100px] items-center justify-between rounded-lg border px-2">
-            <Button
-              size="icon"
-              className="h-4 w-4"
-              variant="ghost"
-              onClick={handleDecreaseQuantityClick}
-            >
+            <Button size="icon" className="h-4 w-4" variant="ghost" onClick={handleDecreaseQuantityClick}>
               <MinusIcon />
             </Button>
-            {increaseCartProductQuantityMutation.isPending ||
-            decreaseCartProductQuantityMutation.isPending ? (
+            {increaseCartProductQuantityMutation.isPending || decreaseCartProductQuantityMutation.isPending ? (
               <ShipWheel className="animate-spin" />
             ) : (
               <p>{quantity}</p>
             )}
-            <Button
-              size="icon"
-              className="h-4 w-4"
-              variant="ghost"
-              onClick={handleIncreaseQuantityClick}
-            >
+            <Button size="icon" className="h-4 w-4" variant="ghost" onClick={handleIncreaseQuantityClick}>
               <PlusIcon />
             </Button>
           </div>
         </div>
       </div>
       <div className="flex flex-col items-end justify-center gap-1">
-        <Button
-          variant="outline"
-          size="icon"
-          onClick={handleRemoveProductFromCart}
-        >
+        <Button variant="outline" size="icon" onClick={handleRemoveProductFromCart}>
           <TrashIcon size="icon" />
         </Button>
 
-        <p className="text-sm font-bold">
-          {formatCurrency(productVariantPriceInCents * quantity)}
-        </p>
+        <p className="text-sm font-bold">{formatCurrency(productVariantPriceInCents * quantity)}</p>
       </div>
     </div>
   );
