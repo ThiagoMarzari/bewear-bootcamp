@@ -4,7 +4,7 @@ import { notFound } from "next/navigation";
 
 import { ProductList } from "@/components/common/products-list";
 import { db } from "@/db";
-import { productTable } from "@/db/schema";
+import { productTable, productVariantTable } from "@/db/schema";
 import { formatCurrency } from "@/utils/money";
 
 import ProductActions from "./components/product-actions";
@@ -22,7 +22,7 @@ export default async function ProductVariantPage({
   const { slug } = await params;
 
   const productVariant = await db.query.productVariantTable.findFirst({
-    where: eq(productTable.slug, slug),
+    where: eq(productVariantTable.slug, slug),
     with: {
       product: {
         with: {

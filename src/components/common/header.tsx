@@ -1,17 +1,9 @@
 "use client";
 
 import { LogInIcon, LogOutIcon, MenuIcon } from "lucide-react";
-
 import Image from "next/image";
-
 import { Button } from "../ui/button";
-import {
-  Sheet,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-} from "../ui/sheet";
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "../ui/sheet";
 import { authClient } from "@/lib/auth-client";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import Link from "next/link";
@@ -24,13 +16,7 @@ export function Header() {
     <header className="sticky top-0 z-50 w-full border-b bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/60 lg:mb-9">
       <div className="mx-auto flex max-w-7xl items-center justify-between px-5 py-4 lg:px-8">
         <Link href="/" className="transition-opacity hover:opacity-80">
-          <Image
-            src="/logo.svg"
-            alt="Logo"
-            width={120}
-            height={31}
-            className="h-auto w-24 md:w-28 lg:w-32"
-          />
+          <Image src="/logo.svg" alt="Logo" width={120} height={31} className="h-auto w-24 md:w-28 lg:w-32" />
         </Link>
 
         <div className="flex items-center gap-2">
@@ -53,30 +39,17 @@ export function Header() {
                     <div className="flex justify-between">
                       <div className="flex items-center gap-2">
                         <Avatar>
-                          <AvatarImage
-                            src={session.user.image as string | undefined}
-                          />
-                          <AvatarFallback>
-                            {session.user.name?.charAt(0)}
-                          </AvatarFallback>
+                          <AvatarImage src={session.user.image as string | undefined} />
+                          <AvatarFallback>{session.user.name?.charAt(0)}</AvatarFallback>
                         </Avatar>
                         <div>
                           <p>
-                            Bem-vindo,{" "}
-                            <span className="font-bold">
-                              {session.user.name}
-                            </span>
+                            Bem-vindo, <span className="font-bold">{session.user.name}</span>
                           </p>
-                          <p className="text-muted-foreground text-sm">
-                            {session.user.email}
-                          </p>
+                          <p className="text-muted-foreground text-sm">{session.user.email}</p>
                         </div>
                       </div>
-                      <Button
-                        className="cursor-pointer"
-                        variant="secondary"
-                        onClick={() => authClient.signOut()}
-                      >
+                      <Button className="cursor-pointer" variant="secondary" onClick={() => authClient.signOut()}>
                         <LogOutIcon />
                       </Button>
                     </div>
