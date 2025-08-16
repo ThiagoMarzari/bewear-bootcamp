@@ -4,13 +4,10 @@ import Image from "next/image";
 import { formatCurrency } from "@/utils/money";
 
 import { Button } from "../ui/button";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { removeProductFromCart } from "@/actions/remove-cart-product";
 import { toast } from "sonner";
-import { DecreaseCartProductQuantity } from "@/actions/decrease-cart-product-quantity";
-import { addProductToCart } from "@/actions/add-cart-product";
 import { useRemoveProductFromCartMutation } from "@/hooks/mutations/use-remove-product-from-cart";
 import { useDecreaseCartProductQuantityMutation } from "@/hooks/mutations/use-decrease-cart-product";
+import { useIncreaseCartProductQuantityMutation } from "@/hooks/mutations/use-increase-cart-product";
 interface CardItemProps {
   id: string;
   productName: string;
@@ -30,20 +27,9 @@ export function CartItem({
   productVariantPriceInCents,
   quantity,
 }: CardItemProps) {
-  const queryClient = useQueryClient();
   const removeProductFromCartMutation = useRemoveProductFromCartMutation(id);
-
   const decreaseCartProductQuantityMutation = useDecreaseCartProductQuantityMutation(id);
-
-  const increaseCartProductQuantityMutation = useMutation({
-    mutationKey: ["increase-cart-product-quantity"],
-    mutationFn: () => addProductToCart({ productVariantId: productVariantId, quantity: 1 }),
-    onSuccess() {
-      queryClient.invalidateQueries({
-        queryKey: ["cart"],
-      });
-    },
-  });
+  const increaseCartProductQuantityMutation = useIncreaseCartProductQuantityMutation(productVariantId);
 
   const handleRemoveProductFromCart = () => {
     removeProductFromCartMutation.mutate(undefined, {
