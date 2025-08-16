@@ -7,11 +7,16 @@ import { db } from "@/db";
 import { cartItemTable } from "@/db/schema";
 import { auth } from "@/lib/auth";
 
-import { RemoveCartProductSchema, removeCartProductSchema } from "./schema";
+import {
+  DecreaseCartProductQuantitySchema,
+  decreaseCartProductQuantitySchema,
+} from "./schema";
 
-export async function removeProductFromCart(data: RemoveCartProductSchema) {
+export async function DecreaseCartProductQuantity(
+  data: DecreaseCartProductQuantitySchema,
+) {
   //validar dados
-  removeCartProductSchema.parse(data);
+  decreaseCartProductQuantitySchema.parse(data);
 
   //verificar se o usuário está autenticado
   const session = await auth.api.getSession({
@@ -28,7 +33,6 @@ export async function removeProductFromCart(data: RemoveCartProductSchema) {
       cart: true,
     },
   });
-
   if (!cartItem) {
     throw new Error("Cart item not found");
   }
@@ -39,5 +43,16 @@ export async function removeProductFromCart(data: RemoveCartProductSchema) {
   }
 
   //Remover item do carrinho
-  await db.delete(cartItemTable).where(eq(cartItemTable.id, cartItem.id));
+  if (cartItem.quantity === 1) {
+    await db.delete(cartItemTable).where(eq(cartItemTable.id, cartItem.id));
+    return;
+  }
+
+  await db
+    .update(cartItemTable)
+    .set({
+      quantity: cartItem.quantity - 1,
+    })
+    .where(eq(cartItemTable.id, cartItem.id))
+    .returning();
 }

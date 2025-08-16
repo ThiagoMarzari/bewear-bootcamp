@@ -7,7 +7,7 @@ import { Button } from "../ui/button";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { removeProductFromCart } from "@/actions/remove-cart-product";
 import { toast } from "sonner";
-
+import { DecreaseCartProductQuantity } from "@/actions/decrease-cart-product-quantity";
 interface CardItemProps {
   id: string;
   productName: string;
@@ -36,6 +36,16 @@ export function CartItem({
     },
   });
 
+  const decreaseCartProductQuantityMutation = useMutation({
+    mutationKey: ["decrease-cart-product-quantity"],
+    mutationFn: () => DecreaseCartProductQuantity({ cartItemId: id }),
+    onSuccess() {
+      queryClient.invalidateQueries({
+        queryKey: ["cart"],
+      });
+    },
+  });
+
   const handleRemoveProductFromCart = () => {
     removeProductFromCartMutation.mutate(undefined, {
       onSuccess: () => {
@@ -45,6 +55,10 @@ export function CartItem({
         toast.error("Erro ao remover produto do carrinho.");
       },
     });
+  };
+
+  const handleDecreaseQuantityClick = () => {
+    decreaseCartProductQuantityMutation.mutate();
   };
 
   return (
@@ -67,7 +81,7 @@ export function CartItem({
               size="icon"
               className="h-4 w-4"
               variant="ghost"
-              onClick={() => {}}
+              onClick={handleDecreaseQuantityClick}
             >
               <MinusIcon />
             </Button>
