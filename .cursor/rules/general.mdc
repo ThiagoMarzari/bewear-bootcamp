@@ -48,3 +48,5 @@ soluções de alta qualidade e fáceis de manter.
 - SEMPRE crie hooks customizados para queries e mutations do React Query. Pegue como exemplo os hooks
   da pasta (mdc:src/hooks) como referência.
 - SEMPRE use a biblioteca "react-number-format" para criar inpputs com máscaras.
+- SEMPRE crie e exporte uma função que retorne a query key de uma query e mutation key
+  de uma mutation.

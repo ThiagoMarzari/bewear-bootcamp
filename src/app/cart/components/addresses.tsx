@@ -21,6 +21,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { useCreateShippingAddressMutation } from "@/hooks/mutations/use-create-shipping-address";
+import { useUserAddresses } from "@/hooks/queries/use-user-addresses";
 
 const addressFormSchema = z.object({
   email: z.email("Email inválido"),
@@ -52,6 +53,7 @@ export default function Addresses() {
   const [selectedAddress, setSelectedAddress] = useState<string | null>(null);
 
   const createShippingAddressMutation = useCreateShippingAddressMutation();
+  const { data: addresses, isLoading: isLoadingAddresses } = useUserAddresses();
 
   const form = useForm<AddressFormSchema>({
     resolver: zodResolver(addressFormSchema),
@@ -76,6 +78,7 @@ export default function Addresses() {
       await createShippingAddressMutation.mutateAsync(data);
       toast.success("Endereço salvo com sucesso!");
       form.reset(); // Limpa o formulário após sucesso
+      setSelectedAddress(null); // Reseta a seleção para mostrar todos os endereços
     } catch (error) {
       toast.error("Erro ao salvar endereço");
       console.error("Erro ao criar endereço:", error);
@@ -89,12 +92,43 @@ export default function Addresses() {
       </CardHeader>
 
       <CardContent>
-        <RadioGroup value={selectedAddress} onValueChange={setSelectedAddress}>
+        <RadioGroup value={selectedAddress} onValueChange={setSelectedAddress} className="space-y-3">
+          {/* Endereços existentes */}
+          {isLoadingAddresses ? (
+            <div className="flex justify-center py-4">
+              <div className="text-sm text-muted-foreground">Carregando endereços...</div>
+            </div>
+          ) : (
+            addresses?.map((address) => (
+              <Card key={address.id}>
+                <CardContent className="pt-4">
+                  <div className="flex items-center space-x-2">
+                    <RadioGroupItem value={address.id} id={address.id} />
+                    <Label htmlFor={address.id} className="flex-1 cursor-pointer">
+                      <div className="text-sm font-medium">{address.recipientName}</div>
+                      <div className="text-sm text-muted-foreground">
+                        {address.street}, {address.number}
+                        {address.complement && `, ${address.complement}`}
+                      </div>
+                      <div className="text-sm text-muted-foreground">
+                        {address.neighborhood}, {address.city} - {address.state}
+                      </div>
+                      <div className="text-sm text-muted-foreground">
+                        CEP: {address.zipCode}
+                      </div>
+                    </Label>
+                  </div>
+                </CardContent>
+              </Card>
+            ))
+          )}
+
+          {/* Botão Adicionar novo endereço */}
           <Card>
-            <CardContent>
+            <CardContent className="pt-4">
               <div className="flex items-center space-x-2">
                 <RadioGroupItem value="add_new" id="add_new" />
-                <Label htmlFor="add_new">Adicionar novo endereço</Label>
+                <Label htmlFor="add_new" className="cursor-pointer">Adicionar novo endereço</Label>
               </div>
             </CardContent>
           </Card>
