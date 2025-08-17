@@ -20,6 +20,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { useCreateShippingAddressMutation } from "@/hooks/mutations/use-create-shipping-address";
 
 const addressFormSchema = z.object({
   email: z.email("Email inválido"),
@@ -49,7 +50,8 @@ type AddressFormSchema = z.infer<typeof addressFormSchema>;
 
 export default function Addresses() {
   const [selectedAddress, setSelectedAddress] = useState<string | null>(null);
-  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const createShippingAddressMutation = useCreateShippingAddressMutation();
 
   const form = useForm<AddressFormSchema>({
     resolver: zodResolver(addressFormSchema),
@@ -70,15 +72,13 @@ export default function Addresses() {
   });
 
   async function onSubmit(data: AddressFormSchema) {
-    setIsSubmitting(true);
     try {
-      // Aqui você pode implementar a lógica de salvamento do endereço
-      console.log("Dados do endereço:", data);
+      await createShippingAddressMutation.mutateAsync(data);
       toast.success("Endereço salvo com sucesso!");
-    } catch {
+      form.reset(); // Limpa o formulário após sucesso
+    } catch (error) {
       toast.error("Erro ao salvar endereço");
-    } finally {
-      setIsSubmitting(false);
+      console.error("Erro ao criar endereço:", error);
     }
   }
 
@@ -114,7 +114,7 @@ export default function Addresses() {
                       <FormControl>
                         <Input
                           placeholder="Digite seu email"
-                          disabled={isSubmitting}
+                          disabled={createShippingAddressMutation.isPending}
                           {...field}
                         />
                       </FormControl>
@@ -134,7 +134,7 @@ export default function Addresses() {
                         <FormControl>
                           <Input
                             placeholder="Digite seu primeiro nome"
-                            disabled={isSubmitting}
+                            disabled={createShippingAddressMutation.isPending}
                             {...field}
                           />
                         </FormControl>
@@ -151,7 +151,7 @@ export default function Addresses() {
                         <FormControl>
                           <Input
                             placeholder="Digite seu sobrenome"
-                            disabled={isSubmitting}
+                            disabled={createShippingAddressMutation.isPending}
                             {...field}
                           />
                         </FormControl>
@@ -175,7 +175,7 @@ export default function Addresses() {
                             mask="_"
                             customInput={Input}
                             placeholder="000.000.000-00"
-                            disabled={isSubmitting}
+                            disabled={createShippingAddressMutation.isPending}
                             onValueChange={(values) => {
                               field.onChange(values.formattedValue);
                             }}
@@ -198,7 +198,7 @@ export default function Addresses() {
                             mask="_"
                             customInput={Input}
                             placeholder="(00) 00000-0000"
-                            disabled={isSubmitting}
+                            disabled={createShippingAddressMutation.isPending}
                             onValueChange={(values) => {
                               field.onChange(values.formattedValue);
                             }}
@@ -224,7 +224,7 @@ export default function Addresses() {
                           mask="_"
                           customInput={Input}
                           placeholder="00000-000"
-                          disabled={isSubmitting}
+                          disabled={createShippingAddressMutation.isPending}
                           onValueChange={(values) => {
                             field.onChange(values.formattedValue);
                           }}
@@ -246,7 +246,7 @@ export default function Addresses() {
                       <FormControl>
                         <Input
                           placeholder="Digite o endereço"
-                          disabled={isSubmitting}
+                          disabled={createShippingAddressMutation.isPending}
                           {...field}
                         />
                       </FormControl>
@@ -266,7 +266,7 @@ export default function Addresses() {
                         <FormControl>
                           <Input
                             placeholder="Digite o número"
-                            disabled={isSubmitting}
+                            disabled={createShippingAddressMutation.isPending}
                             {...field}
                           />
                         </FormControl>
@@ -283,7 +283,7 @@ export default function Addresses() {
                         <FormControl>
                           <Input
                             placeholder="Digite o complemento (opcional)"
-                            disabled={isSubmitting}
+                            disabled={createShippingAddressMutation.isPending}
                             {...field}
                           />
                         </FormControl>
@@ -304,7 +304,7 @@ export default function Addresses() {
                         <FormControl>
                           <Input
                             placeholder="Digite o bairro"
-                            disabled={isSubmitting}
+                            disabled={createShippingAddressMutation.isPending}
                             {...field}
                           />
                         </FormControl>
@@ -321,7 +321,7 @@ export default function Addresses() {
                         <FormControl>
                           <Input
                             placeholder="Digite a cidade"
-                            disabled={isSubmitting}
+                            disabled={createShippingAddressMutation.isPending}
                             {...field}
                           />
                         </FormControl>
@@ -338,7 +338,7 @@ export default function Addresses() {
                         <FormControl>
                           <Input
                             placeholder="Digite o estado"
-                            disabled={isSubmitting}
+                            disabled={createShippingAddressMutation.isPending}
                             {...field}
                           />
                         </FormControl>
@@ -349,8 +349,8 @@ export default function Addresses() {
                 </div>
 
                 {/* Botão de Submit */}
-                <Button type="submit" disabled={isSubmitting} className="w-full">
-                  {isSubmitting ? "Salvando..." : "Continuar com o pagamento"}
+                <Button type="submit" disabled={createShippingAddressMutation.isPending} className="w-full">
+                  {createShippingAddressMutation.isPending ? "Salvando..." : "Continuar com o pagamento"}
                 </Button>
               </form>
             </Form>
