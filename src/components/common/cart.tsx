@@ -22,7 +22,7 @@ export default function Cart() {
           <ShoppingBasketIcon className="h-5 w-5" />
           {/* Exibir a quantidade de itens no carrinho */}
           {cart && cart.items.length > 0 && (
-            <div className="border-primary absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full border">
+            <div className="border-gray-500 absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full border">
               <p>{cart.items.reduce((total, item) => total + item.quantity, 0)}</p>
             </div>
           )}

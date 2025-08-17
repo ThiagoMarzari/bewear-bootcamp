@@ -1,7 +1,9 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useEffect, useState } from "react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { PatternFormat } from "react-number-format";
 import { toast } from "sonner";
@@ -20,11 +22,12 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { cartTable, shippingAddressTable } from "@/db/schema";
+import { shippingAddressTable } from "@/db/schema";
 import { useCreateShippingAddressMutation } from "@/hooks/mutations/use-create-shipping-address";
 import { useUpdateCartShippingAddressMutation } from "@/hooks/mutations/use-update-cart-shipping-address";
-import { useCart } from "@/hooks/queries/use-cart";
 import { useUserAddresses } from "@/hooks/queries/use-user-addresses";
+
+import { formatAddress } from "../helpers/address";
 
 const addressFormSchema = z.object({
   email: z.email("Email inválido"),
@@ -60,6 +63,8 @@ interface AddressesProps {
 export default function Addresses({ shippingAddress, defaultAddressId }: AddressesProps) {
   const [selectedAddress, setSelectedAddress] = useState<string | null>(defaultAddressId || null);
 
+  const router = useRouter();
+
   const createShippingAddressMutation = useCreateShippingAddressMutation();
   const updateCartShippingAddressMutation = useUpdateCartShippingAddressMutation();
 
@@ -94,6 +99,7 @@ export default function Addresses({ shippingAddress, defaultAddressId }: Address
           shippingAddressId: result.id,
         });
         toast.success("Endereço vinculado ao carrinho!");
+
       }
 
       form.reset();
@@ -109,6 +115,7 @@ export default function Addresses({ shippingAddress, defaultAddressId }: Address
       await updateCartShippingAddressMutation.mutateAsync({
         shippingAddressId: addressId,
       });
+      router.push("/cart/confirmation");
     } catch (error) {
       toast.error("Erro ao selecionar endereço");
       console.error("Erro ao selecionar endereço:", error);
@@ -137,25 +144,20 @@ export default function Addresses({ shippingAddress, defaultAddressId }: Address
                     <Label htmlFor={address.id} className="flex-1 cursor-pointer">
                       <div className="text-sm font-medium">{address.recipientName}</div>
                       <div className="text-sm text-muted-foreground">
-                        {address.street}, {address.number}
-                        {address.complement && `, ${address.complement}`}
-                      </div>
-                      <div className="text-sm text-muted-foreground">
-                        {address.neighborhood}, {address.city} - {address.state}
-                      </div>
-                      <div className="text-sm text-muted-foreground">
-                        CEP: {address.zipCode}
+                        {formatAddress(address)}
                       </div>
                     </Label>
                   </div>
                   {selectedAddress === address.id && (
                     <div className="mt-3">
                       <Button
+                        asChild
                         onClick={() => handleExistingAddressSelect(address.id)}
                         disabled={updateCartShippingAddressMutation.isPending}
                         className="w-full"
                       >
-                        {updateCartShippingAddressMutation.isPending ? "Processando..." : "Ir para pagamento"}
+                        {updateCartShippingAddressMutation.isPending ? "Processando..." :
+                          <Button className="w-full">Ir para pagamento</Button>}
                       </Button>
                     </div>
                   )}

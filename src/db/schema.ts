@@ -1,12 +1,5 @@
 import { relations } from "drizzle-orm";
-import {
-  boolean,
-  integer,
-  pgTable,
-  text,
-  timestamp,
-  uuid,
-} from "drizzle-orm/pg-core";
+import { boolean, integer, pgEnum, pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core";
 
 export const userTable = pgTable("user", {
   id: text("id").primaryKey(),
@@ -31,6 +24,7 @@ export const userRelations = relations(userTable, ({ many, one }) => ({
     fields: [userTable.id],
     references: [cartTable.userId],
   }),
+  orders: many(orderTable),
 }));
 
 export const sessionTable = pgTable("session", {
@@ -69,12 +63,8 @@ export const verificationTable = pgTable("verification", {
   identifier: text("identifier").notNull(),
   value: text("value").notNull(),
   expiresAt: timestamp("expires_at").notNull(),
-  createdAt: timestamp("created_at").$defaultFn(
-    () => /* @__PURE__ */ new Date(),
-  ),
-  updatedAt: timestamp("updated_at").$defaultFn(
-    () => /* @__PURE__ */ new Date(),
-  ),
+  createdAt: timestamp("created_at").$defaultFn(() => /* @__PURE__ */ new Date()),
+  updatedAt: timestamp("updated_at").$defaultFn(() => /* @__PURE__ */ new Date()),
 });
 
 export const categoryTable = pgTable("category", {
@@ -120,15 +110,14 @@ export const productVariantTable = pgTable("product_variant", {
   createdAt: timestamp("created_at").notNull().defaultNow(),
 });
 
-export const productVariantRelations = relations(
-  productVariantTable,
-  ({ one }) => ({
-    product: one(productTable, {
-      fields: [productVariantTable.productId],
-      references: [productTable.id],
-    }),
+export const productVariantRelations = relations(productVariantTable, ({ one, many }) => ({
+  product: one(productTable, {
+    fields: [productVariantTable.productId],
+    references: [productTable.id],
   }),
-);
+  cartItems: many(cartItemTable),
+  orderItems: many(orderItemTable),
+}));
 
 //
 export const shippingAddressTable = pgTable("shipping_address", {
@@ -140,7 +129,7 @@ export const shippingAddressTable = pgTable("shipping_address", {
   street: text().notNull(),
   number: text().notNull(),
   email: text().notNull(),
-  cpfOrCnpj: text().notNull(),
+  cpfOrCnpj: text("cpf_or_cnpj").notNull(),
   complement: text(),
   city: text().notNull(),
   phone: text().notNull(),
@@ -151,29 +140,23 @@ export const shippingAddressTable = pgTable("shipping_address", {
   createdAt: timestamp("created_at").notNull().defaultNow(),
 });
 
-export const shippingAddressRelations = relations(
-  shippingAddressTable,
-  ({ one }) => ({
-    user: one(userTable, {
-      fields: [shippingAddressTable.userId],
-      references: [userTable.id],
-    }),
-    cart: one(cartTable, {
-      fields: [shippingAddressTable.id],
-      references: [cartTable.shippingAddressId],
-    }),
+export const shippingAddressRelations = relations(shippingAddressTable, ({ one }) => ({
+  user: one(userTable, {
+    fields: [shippingAddressTable.userId],
+    references: [userTable.id],
   }),
-);
+  cart: one(cartTable, {
+    fields: [shippingAddressTable.id],
+    references: [cartTable.shippingAddressId],
+  }),
+}));
 
 export const cartTable = pgTable("cart", {
   id: uuid().primaryKey().defaultRandom(),
   userId: text("user_id")
     .notNull()
     .references(() => userTable.id, { onDelete: "cascade" }),
-  shippingAddressId: uuid("shipping_address_id").references(
-    () => shippingAddressTable.id,
-    { onDelete: "set null" },
-  ),
+  shippingAddressId: uuid("shipping_address_id").references(() => shippingAddressTable.id, { onDelete: "set null" }),
   createdAt: timestamp("created_at").notNull().defaultNow(),
 });
 
@@ -210,5 +193,69 @@ export const cartItemRelations = relations(cartItemTable, ({ one, many }) => ({
     fields: [cartItemTable.productVariantId],
     references: [productVariantTable.id],
   }),
-  items: many(cartItemTable),
+  orderItems: many(orderItemTable),
+}));
+
+export const orderStatus = pgEnum("order_status", ["pending", "paid", "canceled"]);
+
+export const orderTable = pgTable("order", {
+  id: uuid().primaryKey().defaultRandom(),
+  userId: text("user_id")
+    .notNull()
+    .references(() => userTable.id, { onDelete: "cascade" }),
+  shippingAddressId: uuid("shipping_address_id")
+    .notNull()
+    .references(() => shippingAddressTable.id, { onDelete: "set null" }),
+  recipientName: text("recipient_name").notNull(),
+  street: text().notNull(),
+  number: text().notNull(),
+  email: text().notNull(),
+  cpfOrCnpj: text("cpf_or_cnpj").notNull(),
+  complement: text(),
+  city: text().notNull(),
+  phone: text().notNull(),
+  state: text().notNull(),
+  zipCode: text("zip_code").notNull(),
+  country: text().notNull(),
+  neighborhood: text().notNull(),
+  totalPriceInCents: integer("total_price_in_cents").notNull(),
+  status: orderStatus("status").notNull().default("pending"),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+});
+
+export const orderRelations = relations(orderTable, ({ one, many }) => ({
+  user: one(userTable, {
+    fields: [orderTable.userId],
+    references: [userTable.id],
+  }),
+  shippingAddress: one(shippingAddressTable, {
+    fields: [orderTable.shippingAddressId],
+    references: [shippingAddressTable.id],
+  }),
+  items: many(orderItemTable),
+}));
+
+export const orderItemTable = pgTable("order_item", {
+  id: uuid().primaryKey().defaultRandom(),
+  orderId: uuid("order_id")
+    .notNull()
+    .references(() => orderTable.id, { onDelete: "cascade" }),
+  productVariantId: uuid("product_variant_id")
+    .notNull()
+    .references(() => productVariantTable.id, { onDelete: "restrict" }),
+  quantity: integer("quantity").notNull(),
+  priceInCents: integer("price_in_cents").notNull(),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+});
+
+export const orderItemRelations = relations(orderItemTable, ({ one }) => ({
+  order: one(orderTable, {
+    fields: [orderItemTable.orderId],
+    references: [orderTable.id],
+  }),
+  productVariant: one(productVariantTable, {
+    fields: [orderItemTable.productVariantId],
+    references: [productVariantTable.id],
+  }),
 }));

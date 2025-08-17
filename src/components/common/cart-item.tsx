@@ -34,7 +34,7 @@ export function CartItem({
   const handleRemoveProductFromCart = () => {
     removeProductFromCartMutation.mutate(undefined, {
       onSuccess: () => {
-        toast.success("Produto removido do carrinho.");
+        //toast.success("Produto removido do carrinho.");
       },
       onError: () => {
         toast.error("Erro ao remover produto do carrinho.");

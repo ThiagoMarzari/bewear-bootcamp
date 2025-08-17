@@ -28,7 +28,6 @@ export default function AddToCartButton({ productVariantId, quantity }: AddToCar
       }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: getUseCartQueryKey() });
-      toast.success("Produto adicionado ao carrinho!");
     },
     onError: (error) => {
       toast.error("Erro ao adicionar produto ao carrinho");
