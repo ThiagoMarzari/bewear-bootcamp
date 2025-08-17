@@ -1,7 +1,9 @@
 "use client";
 
 import { ShoppingBasketIcon } from "lucide-react";
+import Link from "next/link";
 
+import { useCart } from "@/hooks/queries/use-cart";
 import { formatCurrency } from "@/utils/money";
 
 import { Button } from "../ui/button";
@@ -9,8 +11,6 @@ import { ScrollArea } from "../ui/scroll-area";
 import { Separator } from "../ui/separator";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "../ui/sheet";
 import { CartItem } from "./cart-item";
-import { useCart } from "@/hooks/queries/use-cart";
-import Link from "next/link";
 
 export default function Cart() {
   //Renomeando o data para cart

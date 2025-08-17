@@ -50,9 +50,7 @@ export async function addProductToCart(data: AddProductToCartSchema) {
 
   //verificar se a variante já está no carrinho
   const cartItem = await db.query.cartItemTable.findFirst({
-    where: (cartItem, { eq }) =>
-      eq(cartItem.cartId, cartId) &&
-      eq(cartItem.productVariantId, data.productVariantId),
+    where: (cartItem, { eq }) => eq(cartItem.cartId, cartId) && eq(cartItem.productVariantId, data.productVariantId),
   });
 
   if (cartItem) {
