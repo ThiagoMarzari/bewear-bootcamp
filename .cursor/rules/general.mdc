@@ -50,3 +50,4 @@ soluções de alta qualidade e fáceis de manter.
 - SEMPRE use a biblioteca "react-number-format" para criar inpputs com máscaras.
 - SEMPRE crie e exporte uma função que retorne a query key de uma query e mutation key
   de uma mutation.
+- SEMPRE use o componente Image do Next.js quando for necessário para colocar imagens.
