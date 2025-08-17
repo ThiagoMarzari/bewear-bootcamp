@@ -22,7 +22,7 @@ export default async function Home() {
   });
 
   const categories = await db.query.categoryTable.findMany();
-  console.log(products);
+
   return (
     <div className="mx-auto max-w-7xl space-y-8 lg:space-y-12">
       <div className="px-5 lg:px-8">

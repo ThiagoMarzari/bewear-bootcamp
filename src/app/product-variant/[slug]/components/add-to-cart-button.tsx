@@ -1,15 +1,15 @@
 "use client";
 
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 import { Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
 import { addProductToCart } from "@/actions/add-cart-product";
 import { Button } from "@/components/ui/button";
-import { getUserCartQueryKey } from "@/hooks/queries/use-cart";
-import { queryClient } from "@/providers/react-query";
+import { getUseCartQueryKey } from "@/hooks/queries/use-cart";
 import { authClient } from "@/lib/auth-client";
+import { queryClient } from "@/providers/react-query";
 interface AddToCartButtonProps {
   productVariantId: string;
   quantity: number;
@@ -18,7 +18,7 @@ interface AddToCartButtonProps {
 export default function AddToCartButton({ productVariantId, quantity }: AddToCartButtonProps) {
   const router = useRouter();
   const { data: session } = authClient.useSession();
-  
+
   const { mutate, isPending } = useMutation({
     mutationKey: ["add-to-cart", productVariantId, quantity],
     mutationFn: () =>
@@ -27,9 +27,7 @@ export default function AddToCartButton({ productVariantId, quantity }: AddToCar
         quantity,
       }),
     onSuccess: () => {
-      // Ele atualiza o carrinho com base na chave que passei, ele refaz todas as
-      //queries que tem essa chave
-      queryClient.invalidateQueries({ queryKey: getUserCartQueryKey() });
+      queryClient.invalidateQueries({ queryKey: getUseCartQueryKey() });
       toast.success("Produto adicionado ao carrinho!");
     },
     onError: (error) => {
@@ -42,7 +40,7 @@ export default function AddToCartButton({ productVariantId, quantity }: AddToCar
       router.push("/authentication");
       return;
     }
-    
+
     mutate();
   };
 

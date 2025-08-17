@@ -1,13 +1,13 @@
 import { MinusIcon, PlusIcon, ShipWheel, TrashIcon } from "lucide-react";
 import Image from "next/image";
+import { toast } from "sonner";
 
+import { useDecreaseCartProductQuantityMutation } from "@/hooks/mutations/use-decrease-cart-product";
+import { useIncreaseCartProductQuantityMutation } from "@/hooks/mutations/use-increase-cart-product";
+import { useRemoveProductFromCartMutation } from "@/hooks/mutations/use-remove-product-from-cart";
 import { formatCurrency } from "@/utils/money";
 
 import { Button } from "../ui/button";
-import { toast } from "sonner";
-import { useRemoveProductFromCartMutation } from "@/hooks/mutations/use-remove-product-from-cart";
-import { useDecreaseCartProductQuantityMutation } from "@/hooks/mutations/use-decrease-cart-product";
-import { useIncreaseCartProductQuantityMutation } from "@/hooks/mutations/use-increase-cart-product";
 interface CardItemProps {
   id: string;
   productName: string;
@@ -74,7 +74,7 @@ export function CartItem({
       </div>
       <div className="flex flex-col items-end justify-center gap-1">
         <Button variant="outline" size="icon" onClick={handleRemoveProductFromCart}>
-          <TrashIcon size="icon" />
+          <TrashIcon size={16} />
         </Button>
 
         <p className="text-sm font-bold">{formatCurrency(productVariantPriceInCents * quantity)}</p>
