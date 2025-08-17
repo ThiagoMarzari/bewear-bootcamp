@@ -1,5 +1,6 @@
 "use server";
 
+import { revalidatePath } from "next/cache";
 import { headers } from "next/headers";
 
 import { db } from "@/db";
@@ -39,6 +40,9 @@ export async function createShippingAddress(data: CreateShippingAddressSchema) {
       country: "Brasil", // Assumindo que é sempre Brasil por enquanto
     })
     .returning();
+
+  // Invalida o cache do carrinho
+  revalidatePath("/cart/identification");
 
   return shippingAddress;
 }

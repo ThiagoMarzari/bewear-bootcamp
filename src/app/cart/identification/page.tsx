@@ -16,7 +16,10 @@ export default async function IdentificationPage() {
   }
 
   const cart = await db.query.cartTable.findFirst({
-    where: eq(cartTable.userId, session?.user.id),
+    where: eq(cartTable.userId, session.user.id),
+    with: {
+      shippingAddress: true,
+    },
   });
 
   if (!cart) {
@@ -30,7 +33,7 @@ export default async function IdentificationPage() {
   return (
     <div>
       <div className="px-5">
-        <Addresses shippingAddress={shippingAddress} />
+        <Addresses shippingAddress={shippingAddress} defaultAddressId={cart.shippingAddressId} />
       </div>
     </div>
   );

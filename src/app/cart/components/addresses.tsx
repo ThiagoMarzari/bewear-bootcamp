@@ -1,7 +1,7 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { PatternFormat } from "react-number-format";
 import { toast } from "sonner";
@@ -20,8 +20,10 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { shippingAddressTable } from "@/db/schema";
+import { cartTable, shippingAddressTable } from "@/db/schema";
 import { useCreateShippingAddressMutation } from "@/hooks/mutations/use-create-shipping-address";
+import { useUpdateCartShippingAddressMutation } from "@/hooks/mutations/use-update-cart-shipping-address";
+import { useCart } from "@/hooks/queries/use-cart";
 import { useUserAddresses } from "@/hooks/queries/use-user-addresses";
 
 const addressFormSchema = z.object({
@@ -52,14 +54,15 @@ type AddressFormSchema = z.infer<typeof addressFormSchema>;
 
 interface AddressesProps {
   shippingAddress: typeof shippingAddressTable.$inferSelect[];
+  defaultAddressId: string | null;
 }
 
-export default function Addresses({ shippingAddress }: AddressesProps) {
-  const [selectedAddress, setSelectedAddress] = useState<string | null>(null);
+export default function Addresses({ shippingAddress, defaultAddressId }: AddressesProps) {
+  const [selectedAddress, setSelectedAddress] = useState<string | null>(defaultAddressId || null);
 
   const createShippingAddressMutation = useCreateShippingAddressMutation();
+  const updateCartShippingAddressMutation = useUpdateCartShippingAddressMutation();
 
-  //Passando o conteúdo do banco de dados para o hook
   const { data: addresses, isLoading: isLoadingAddresses } = useUserAddresses({ initialData: shippingAddress });
 
   const form = useForm<AddressFormSchema>({
@@ -82,13 +85,34 @@ export default function Addresses({ shippingAddress }: AddressesProps) {
 
   async function onSubmit(data: AddressFormSchema) {
     try {
-      await createShippingAddressMutation.mutateAsync(data);
+      const result = await createShippingAddressMutation.mutateAsync(data);
       toast.success("Endereço salvo com sucesso!");
-      form.reset(); // Limpa o formulário após sucesso
+
+      // Se o endereço foi criado com sucesso, vincula ao carrinho
+      if (result?.id) {
+        await updateCartShippingAddressMutation.mutateAsync({
+          shippingAddressId: result.id,
+        });
+        toast.success("Endereço vinculado ao carrinho!");
+      }
+
+      form.reset();
       setSelectedAddress(null); // Reseta a seleção para mostrar todos os endereços
     } catch (error) {
       toast.error("Erro ao salvar endereço");
       console.error("Erro ao criar endereço:", error);
+    }
+  }
+
+  async function handleExistingAddressSelect(addressId: string) {
+    try {
+      await updateCartShippingAddressMutation.mutateAsync({
+        shippingAddressId: addressId,
+      });
+      toast.success("Endereço selecionado para o carrinho!");
+    } catch (error) {
+      toast.error("Erro ao selecionar endereço");
+      console.error("Erro ao selecionar endereço:", error);
     }
   }
 
@@ -125,6 +149,17 @@ export default function Addresses({ shippingAddress }: AddressesProps) {
                       </div>
                     </Label>
                   </div>
+                  {selectedAddress === address.id && (
+                    <div className="mt-3">
+                      <Button
+                        onClick={() => handleExistingAddressSelect(address.id)}
+                        disabled={updateCartShippingAddressMutation.isPending}
+                        className="w-full"
+                      >
+                        {updateCartShippingAddressMutation.isPending ? "Processando..." : "Ir para pagamento"}
+                      </Button>
+                    </div>
+                  )}
                 </CardContent>
               </Card>
             ))
@@ -155,7 +190,7 @@ export default function Addresses({ shippingAddress }: AddressesProps) {
                       <FormControl>
                         <Input
                           placeholder="Digite seu email"
-                          disabled={createShippingAddressMutation.isPending}
+                          disabled={createShippingAddressMutation.isPending || updateCartShippingAddressMutation.isPending}
                           {...field}
                         />
                       </FormControl>
@@ -175,7 +210,7 @@ export default function Addresses({ shippingAddress }: AddressesProps) {
                         <FormControl>
                           <Input
                             placeholder="Digite seu primeiro nome"
-                            disabled={createShippingAddressMutation.isPending}
+                            disabled={createShippingAddressMutation.isPending || updateCartShippingAddressMutation.isPending}
                             {...field}
                           />
                         </FormControl>
@@ -192,7 +227,7 @@ export default function Addresses({ shippingAddress }: AddressesProps) {
                         <FormControl>
                           <Input
                             placeholder="Digite seu sobrenome"
-                            disabled={createShippingAddressMutation.isPending}
+                            disabled={createShippingAddressMutation.isPending || updateCartShippingAddressMutation.isPending}
                             {...field}
                           />
                         </FormControl>
@@ -216,7 +251,7 @@ export default function Addresses({ shippingAddress }: AddressesProps) {
                             mask="_"
                             customInput={Input}
                             placeholder="000.000.000-00"
-                            disabled={createShippingAddressMutation.isPending}
+                            disabled={createShippingAddressMutation.isPending || updateCartShippingAddressMutation.isPending}
                             onValueChange={(values) => {
                               field.onChange(values.formattedValue);
                             }}
@@ -239,7 +274,7 @@ export default function Addresses({ shippingAddress }: AddressesProps) {
                             mask="_"
                             customInput={Input}
                             placeholder="(00) 00000-0000"
-                            disabled={createShippingAddressMutation.isPending}
+                            disabled={createShippingAddressMutation.isPending || updateCartShippingAddressMutation.isPending}
                             onValueChange={(values) => {
                               field.onChange(values.formattedValue);
                             }}
@@ -265,7 +300,7 @@ export default function Addresses({ shippingAddress }: AddressesProps) {
                           mask="_"
                           customInput={Input}
                           placeholder="00000-000"
-                          disabled={createShippingAddressMutation.isPending}
+                          disabled={createShippingAddressMutation.isPending || updateCartShippingAddressMutation.isPending}
                           onValueChange={(values) => {
                             field.onChange(values.formattedValue);
                           }}
@@ -287,7 +322,7 @@ export default function Addresses({ shippingAddress }: AddressesProps) {
                       <FormControl>
                         <Input
                           placeholder="Digite o endereço"
-                          disabled={createShippingAddressMutation.isPending}
+                          disabled={createShippingAddressMutation.isPending || updateCartShippingAddressMutation.isPending}
                           {...field}
                         />
                       </FormControl>
@@ -307,7 +342,7 @@ export default function Addresses({ shippingAddress }: AddressesProps) {
                         <FormControl>
                           <Input
                             placeholder="Digite o número"
-                            disabled={createShippingAddressMutation.isPending}
+                            disabled={createShippingAddressMutation.isPending || updateCartShippingAddressMutation.isPending}
                             {...field}
                           />
                         </FormControl>
@@ -324,7 +359,7 @@ export default function Addresses({ shippingAddress }: AddressesProps) {
                         <FormControl>
                           <Input
                             placeholder="Digite o complemento (opcional)"
-                            disabled={createShippingAddressMutation.isPending}
+                            disabled={createShippingAddressMutation.isPending || updateCartShippingAddressMutation.isPending}
                             {...field}
                           />
                         </FormControl>
@@ -345,7 +380,7 @@ export default function Addresses({ shippingAddress }: AddressesProps) {
                         <FormControl>
                           <Input
                             placeholder="Digite o bairro"
-                            disabled={createShippingAddressMutation.isPending}
+                            disabled={createShippingAddressMutation.isPending || updateCartShippingAddressMutation.isPending}
                             {...field}
                           />
                         </FormControl>
@@ -362,7 +397,7 @@ export default function Addresses({ shippingAddress }: AddressesProps) {
                         <FormControl>
                           <Input
                             placeholder="Digite a cidade"
-                            disabled={createShippingAddressMutation.isPending}
+                            disabled={createShippingAddressMutation.isPending || updateCartShippingAddressMutation.isPending}
                             {...field}
                           />
                         </FormControl>
@@ -379,7 +414,7 @@ export default function Addresses({ shippingAddress }: AddressesProps) {
                         <FormControl>
                           <Input
                             placeholder="Digite o estado"
-                            disabled={createShippingAddressMutation.isPending}
+                            disabled={createShippingAddressMutation.isPending || updateCartShippingAddressMutation.isPending}
                             {...field}
                           />
                         </FormControl>
@@ -390,8 +425,15 @@ export default function Addresses({ shippingAddress }: AddressesProps) {
                 </div>
 
                 {/* Botão de Submit */}
-                <Button type="submit" disabled={createShippingAddressMutation.isPending} className="w-full">
-                  {createShippingAddressMutation.isPending ? "Salvando..." : "Continuar com o pagamento"}
+                <Button
+                  type="submit"
+                  disabled={createShippingAddressMutation.isPending || updateCartShippingAddressMutation.isPending}
+                  className="w-full"
+                >
+                  {createShippingAddressMutation.isPending || updateCartShippingAddressMutation.isPending
+                    ? "Salvando..."
+                    : "Salvar endereço"
+                  }
                 </Button>
               </form>
             </Form>
