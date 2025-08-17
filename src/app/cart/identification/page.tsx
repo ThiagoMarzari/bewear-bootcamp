@@ -7,6 +7,7 @@ import { cartTable, shippingAddressTable } from "@/db/schema";
 import { auth } from "@/lib/auth";
 
 import Addresses from "../components/addresses";
+import CartSummary from "../components/cart-summary";
 
 export default async function IdentificationPage() {
   const session = await auth.api.getSession({ headers: await headers() });
@@ -19,6 +20,15 @@ export default async function IdentificationPage() {
     where: eq(cartTable.userId, session.user.id),
     with: {
       shippingAddress: true,
+      items: {
+        with: {
+          productVariant: {
+            with: {
+              product: true,
+            },
+          },
+        },
+      },
     },
   });
 
@@ -32,8 +42,9 @@ export default async function IdentificationPage() {
 
   return (
     <div>
-      <div className="px-5">
+      <div className="space-y-4 px-5">
         <Addresses shippingAddress={shippingAddress} defaultAddressId={cart.shippingAddressId} />
+        <CartSummary cart={cart} />
       </div>
     </div>
   );

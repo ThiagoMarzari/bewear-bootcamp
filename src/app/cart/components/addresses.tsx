@@ -109,7 +109,6 @@ export default function Addresses({ shippingAddress, defaultAddressId }: Address
       await updateCartShippingAddressMutation.mutateAsync({
         shippingAddressId: addressId,
       });
-      toast.success("Endereço selecionado para o carrinho!");
     } catch (error) {
       toast.error("Erro ao selecionar endereço");
       console.error("Erro ao selecionar endereço:", error);
