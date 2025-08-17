@@ -3,7 +3,7 @@ import { headers } from "next/headers";
 import { notFound } from "next/navigation";
 
 import { db } from "@/db";
-import { cartTable } from "@/db/schema";
+import { cartTable, shippingAddressTable } from "@/db/schema";
 import { auth } from "@/lib/auth";
 
 import Addresses from "../components/addresses";
@@ -23,10 +23,14 @@ export default async function IdentificationPage() {
     return notFound();
   }
 
+  const shippingAddress = await db.query.shippingAddressTable.findMany({
+    where: eq(shippingAddressTable.userId, session?.user.id),
+  });
+
   return (
     <div>
       <div className="px-5">
-        <Addresses />
+        <Addresses shippingAddress={shippingAddress} />
       </div>
     </div>
   );
