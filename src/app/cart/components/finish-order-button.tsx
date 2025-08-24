@@ -7,13 +7,7 @@ import { useState } from "react";
 
 import createCheckoutSession from "@/actions/create-checkout-session";
 import { Button } from "@/components/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogTitle,
-} from "@/components/ui/dialog"
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogTitle } from "@/components/ui/dialog";
 import { useFinishOrder } from "@/hooks/mutations/use-finish-order";
 
 export default function FinishOrderButton() {
@@ -27,8 +21,8 @@ export default function FinishOrderButton() {
 
     const { orderId } = await finishOrderMutation.mutateAsync();
     const checkoutSession = await createCheckoutSession({
-      orderId
-    })
+      orderId,
+    });
 
     const stripe = await loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY);
     if (!stripe) {
@@ -40,7 +34,7 @@ export default function FinishOrderButton() {
     });
 
     setSucessDialogOpen(true);
-  }
+  };
 
   const finishOrderMutation = useFinishOrder();
 
@@ -56,19 +50,16 @@ export default function FinishOrderButton() {
       </Button>
       <Dialog open={sucessDialogOpen} onOpenChange={setSucessDialogOpen}>
         <DialogContent className="text-center">
-
           <Image src="/illustration.svg" alt="Sucess" width={200} height={200} className="mx-auto" />
 
-          <DialogTitle className="text-2xl font-bold">
-            Pedido efetuado com sucesso
-          </DialogTitle>
+          <DialogTitle className="text-2xl font-bold">Pedido efetuado com sucesso</DialogTitle>
 
           <DialogDescription className="text-muted-foreground">
             Seu pedido foi efetuado com sucesso. Você pode acompanhar o status na seção de “Meus Pedidos”.
           </DialogDescription>
 
           <DialogFooter>
-            <div className="flex flex-col gap-4 w-full">
+            <div className="flex w-full flex-col gap-4">
               <Button
                 className="w-full cursor-pointer"
                 variant="outline"
@@ -90,9 +81,7 @@ export default function FinishOrderButton() {
                 Ver meus pedidos
               </Button>
             </div>
-
           </DialogFooter>
-
         </DialogContent>
       </Dialog>
     </>
