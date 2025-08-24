@@ -17,7 +17,6 @@ export const userTable = pgTable("user", {
     .notNull(),
 });
 
-//O usuario pode ter vários endereços de entrega
 export const userRelations = relations(userTable, ({ many, one }) => ({
   shippingAddresses: many(shippingAddressTable),
   cart: one(cartTable, {
@@ -84,7 +83,7 @@ export const productTable = pgTable("product", {
     .notNull()
     .references(() => categoryTable.id, { onDelete: "set null" }),
   name: text().notNull(),
-  slug: text().notNull().unique(), // Unique slug for product
+  slug: text().notNull().unique(),
   description: text().notNull(),
   createdAt: timestamp("created_at").notNull().defaultNow(),
 });
@@ -102,8 +101,8 @@ export const productVariantTable = pgTable("product_variant", {
   productId: uuid("product_id")
     .notNull()
     .references(() => productTable.id, { onDelete: "cascade" }),
-  slug: text().notNull(),
   name: text().notNull(),
+  slug: text().notNull().unique(),
   color: text().notNull(),
   priceInCents: integer("price_in_cents").notNull(),
   imageUrl: text("image_url").notNull(),
@@ -119,28 +118,27 @@ export const productVariantRelations = relations(productVariantTable, ({ one, ma
   orderItems: many(orderItemTable),
 }));
 
-//
 export const shippingAddressTable = pgTable("shipping_address", {
   id: uuid().primaryKey().defaultRandom(),
   userId: text("user_id")
     .notNull()
     .references(() => userTable.id, { onDelete: "cascade" }),
-  recipientName: text("recipient_name").notNull(),
+  recipientName: text().notNull(),
   street: text().notNull(),
   number: text().notNull(),
-  email: text().notNull(),
-  cpfOrCnpj: text("cpf_or_cnpj").notNull(),
   complement: text(),
   city: text().notNull(),
-  phone: text().notNull(),
   state: text().notNull(),
-  zipCode: text("zip_code").notNull(),
-  country: text().notNull(),
   neighborhood: text().notNull(),
+  zipCode: text().notNull(),
+  country: text().notNull(),
+  phone: text().notNull(),
+  email: text().notNull(),
+  cpfOrCnpj: text().notNull(),
   createdAt: timestamp("created_at").notNull().defaultNow(),
 });
 
-export const shippingAddressRelations = relations(shippingAddressTable, ({ one }) => ({
+export const shippingAddressRelations = relations(shippingAddressTable, ({ one, many }) => ({
   user: one(userTable, {
     fields: [shippingAddressTable.userId],
     references: [userTable.id],
@@ -149,6 +147,7 @@ export const shippingAddressRelations = relations(shippingAddressTable, ({ one }
     fields: [shippingAddressTable.id],
     references: [cartTable.shippingAddressId],
   }),
+  orders: many(orderTable),
 }));
 
 export const cartTable = pgTable("cart", {
@@ -165,11 +164,11 @@ export const cartRelations = relations(cartTable, ({ one, many }) => ({
     fields: [cartTable.userId],
     references: [userTable.id],
   }),
-  items: many(cartItemTable),
   shippingAddress: one(shippingAddressTable, {
     fields: [cartTable.shippingAddressId],
     references: [shippingAddressTable.id],
   }),
+  items: many(cartItemTable),
 }));
 
 export const cartItemTable = pgTable("cart_item", {
@@ -184,7 +183,7 @@ export const cartItemTable = pgTable("cart_item", {
   createdAt: timestamp("created_at").notNull().defaultNow(),
 });
 
-export const cartItemRelations = relations(cartItemTable, ({ one, many }) => ({
+export const cartItemRelations = relations(cartItemTable, ({ one }) => ({
   cart: one(cartTable, {
     fields: [cartItemTable.cartId],
     references: [cartTable.id],
@@ -193,7 +192,6 @@ export const cartItemRelations = relations(cartItemTable, ({ one, many }) => ({
     fields: [cartItemTable.productVariantId],
     references: [productVariantTable.id],
   }),
-  orderItems: many(orderItemTable),
 }));
 
 export const orderStatus = pgEnum("order_status", ["pending", "paid", "canceled"]);
@@ -206,22 +204,21 @@ export const orderTable = pgTable("order", {
   shippingAddressId: uuid("shipping_address_id")
     .notNull()
     .references(() => shippingAddressTable.id, { onDelete: "set null" }),
-  recipientName: text("recipient_name").notNull(),
+  recipientName: text().notNull(),
   street: text().notNull(),
   number: text().notNull(),
-  email: text().notNull(),
-  cpfOrCnpj: text("cpf_or_cnpj").notNull(),
   complement: text(),
   city: text().notNull(),
-  phone: text().notNull(),
   state: text().notNull(),
-  zipCode: text("zip_code").notNull(),
-  country: text().notNull(),
   neighborhood: text().notNull(),
+  zipCode: text().notNull(),
+  country: text().notNull(),
+  phone: text().notNull(),
+  email: text().notNull(),
+  cpfOrCnpj: text().notNull(),
   totalPriceInCents: integer("total_price_in_cents").notNull(),
-  status: orderStatus("status").notNull().default("pending"),
+  status: orderStatus().notNull().default("pending"),
   createdAt: timestamp("created_at").notNull().defaultNow(),
-  updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });
 
 export const orderRelations = relations(orderTable, ({ one, many }) => ({

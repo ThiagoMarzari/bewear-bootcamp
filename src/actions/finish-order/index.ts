@@ -1,6 +1,7 @@
 "use server";
 
 import { eq } from "drizzle-orm";
+import { revalidatePath } from "next/cache";
 import { headers } from "next/headers";
 
 import { db } from "@/db";
@@ -14,8 +15,6 @@ export const finishOrder = async () => {
   if (!session) {
     throw new Error("Unauthorized");
   }
-
-  let orderId: string | undefined;
 
   const cart = await db.query.cartTable.findFirst({
     where: eq(cartTable.userId, session.user.id),
@@ -35,6 +34,7 @@ export const finishOrder = async () => {
     throw new Error("Shipping address not found");
   }
   const totalPriceInCents = cart.items.reduce((acc, item) => acc + item.productVariant.priceInCents * item.quantity, 0);
+  let orderId: string | undefined;
   await db.transaction(async (tx) => {
     if (!cart.shippingAddress) {
       throw new Error("Shipping address not found");
@@ -73,12 +73,8 @@ export const finishOrder = async () => {
     await tx.delete(cartTable).where(eq(cartTable.id, cart.id));
     await tx.delete(cartItemTable).where(eq(cartItemTable.cartId, cart.id));
   });
-
   if (!orderId) {
     throw new Error("Failed to create order");
   }
-
-  return {
-    orderId,
-  };
+  return { orderId };
 };
