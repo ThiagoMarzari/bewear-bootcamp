@@ -49,6 +49,6 @@ export const POST = async (request: Request) => {
     
     await deleteCart({ userId: order.userId });
   } 
-  //else if (event.type === 'checkout.session.canceled')
+
   return NextResponse.json({ received: true });
 };

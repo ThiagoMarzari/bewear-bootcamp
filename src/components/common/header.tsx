@@ -15,7 +15,7 @@ export function Header() {
   const { data: session } = authClient.useSession();
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/60 lg:mb-9">
+    <header className="sticky top-0 z-50 w-full bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/60">
       <div className="mx-auto flex max-w-7xl items-center justify-between px-5 py-4 lg:px-8">
         <Link href="/" className="transition-opacity hover:opacity-80">
           <Image src="/logo.svg" alt="Logo" width={120} height={31} className="h-auto w-24 md:w-28 lg:w-32" />
@@ -55,6 +55,11 @@ export function Header() {
                         <LogOutIcon />
                       </Button>
                     </div>
+                    <div className="mt-4 space-y-2">
+                      <Button asChild variant="ghost" className="w-full justify-start">
+                        <Link href="/my-orders">Meus pedidos</Link>
+                      </Button>
+                    </div>
                   </>
                 ) : (
                   // Not logged in
@@ -72,6 +77,7 @@ export function Header() {
           </Sheet>
         </div>
       </div>
+
     </header>
   );
 }
