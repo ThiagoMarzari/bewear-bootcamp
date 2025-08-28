@@ -3,6 +3,7 @@
 import { LogInIcon, LogOutIcon, MenuIcon } from "lucide-react";
 import Link from "next/link";
 
+import { userTable } from "@/db/schema";
 import { authClient } from "@/lib/auth-client";
 
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
@@ -10,7 +11,11 @@ import { Button } from "../ui/button";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "../ui/sheet";
 import Cart from "./cart";
 
-export function HeaderClient() {
+interface HeaderClientProps {
+  user: (typeof userTable.$inferSelect) | null;
+}
+
+export function HeaderClient({ user }: HeaderClientProps) {
   const { data: session } = authClient.useSession();
 
   return (
@@ -65,7 +70,15 @@ export function HeaderClient() {
                 </Button>
               </div>
             )}
+            {user?.role === "admin" && (
+              <div className="mt-4 space-y-2">
+                <Button asChild variant="ghost" className="w-full justify-start">
+                  <Link href="/admin">Dashboard</Link>
+                </Button>
+              </div>
+            )}
           </div>
+
         </SheetContent>
       </Sheet>
     </div>

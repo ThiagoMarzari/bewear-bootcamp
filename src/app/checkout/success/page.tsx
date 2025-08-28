@@ -13,7 +13,7 @@ import {
 export default function CheckoutSuccessPage() {
   return (
     <>
-      <Dialog open={true} onOpenChange={() => {}}>
+      <Dialog open={true}>
         <DialogContent className="text-center">
           <Image
             src="/illustration.svg"

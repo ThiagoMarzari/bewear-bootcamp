@@ -1,5 +1,5 @@
 
-import { and, eq } from "drizzle-orm";
+import { and, desc, eq } from "drizzle-orm";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 
@@ -19,7 +19,11 @@ export default async function MyOrdersPage() {
   }
 
   const orders = await db.query.orderTable.findMany({
-    where: and(eq(orderTable.userId, session.user.id), eq(orderTable.status, "paid")),
+    where: and(
+      eq(orderTable.userId, session.user.id),
+      eq(orderTable.status, "paid"),
+    ),
+    orderBy: [desc(orderTable.createdAt)],
 
     with: {
       items: {
