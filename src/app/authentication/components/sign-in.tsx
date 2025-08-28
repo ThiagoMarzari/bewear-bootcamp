@@ -8,22 +8,8 @@ import { toast } from "sonner";
 import z from "zod";
 
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
 import { authClient } from "@/lib/auth-client";
@@ -60,11 +46,11 @@ export function SignInForm() {
           toast.success("Login realizado com sucesso");
           setLoading(false);
         },
-        onError: (error) => {
+        onError: () => {
           toast.error("Ocorreu um erro ao fazer login");
           setLoading(false);
         },
-      },
+      }
     );
   }
 
@@ -92,11 +78,7 @@ export function SignInForm() {
                   <FormItem>
                     <FormLabel>Email</FormLabel>
                     <FormControl>
-                      <Input
-                        placeholder="Digite seu email"
-                        disabled={loading}
-                        {...field}
-                      />
+                      <Input placeholder="Digite seu email" disabled={loading} {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -109,12 +91,7 @@ export function SignInForm() {
                   <FormItem>
                     <FormLabel>Senha</FormLabel>
                     <FormControl>
-                      <Input
-                        placeholder="Digite sua senha"
-                        type="password"
-                        disabled={loading}
-                        {...field}
-                      />
+                      <Input placeholder="Digite sua senha" type="password" disabled={loading} {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>

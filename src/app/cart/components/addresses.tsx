@@ -1,7 +1,6 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
@@ -11,14 +10,7 @@ import { z } from "zod";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
@@ -56,7 +48,7 @@ const addressFormSchema = z.object({
 type AddressFormSchema = z.infer<typeof addressFormSchema>;
 
 interface AddressesProps {
-  shippingAddress: typeof shippingAddressTable.$inferSelect[];
+  shippingAddress: (typeof shippingAddressTable.$inferSelect)[];
   defaultAddressId: string | null;
 }
 
@@ -99,7 +91,6 @@ export default function Addresses({ shippingAddress, defaultAddressId }: Address
           shippingAddressId: result.id,
         });
         toast.success("Endereço vinculado ao carrinho!");
-
       }
 
       form.reset();
@@ -133,7 +124,7 @@ export default function Addresses({ shippingAddress, defaultAddressId }: Address
           {/* Endereços existentes */}
           {isLoadingAddresses ? (
             <div className="flex justify-center py-4">
-              <div className="text-sm text-muted-foreground">Carregando endereços...</div>
+              <div className="text-muted-foreground text-sm">Carregando endereços...</div>
             </div>
           ) : (
             addresses?.map((address) => (
@@ -143,9 +134,7 @@ export default function Addresses({ shippingAddress, defaultAddressId }: Address
                     <RadioGroupItem value={address.id} id={address.id} />
                     <Label htmlFor={address.id} className="flex-1 cursor-pointer">
                       <div className="text-sm font-medium">{address.recipientName}</div>
-                      <div className="text-sm text-muted-foreground">
-                        {formatAddress(address)}
-                      </div>
+                      <div className="text-muted-foreground text-sm">{formatAddress(address)}</div>
                     </Label>
                   </div>
                   {selectedAddress === address.id && (
@@ -156,8 +145,11 @@ export default function Addresses({ shippingAddress, defaultAddressId }: Address
                         disabled={updateCartShippingAddressMutation.isPending}
                         className="w-full"
                       >
-                        {updateCartShippingAddressMutation.isPending ? "Processando..." :
-                          <Button className="w-full">Ir para pagamento</Button>}
+                        {updateCartShippingAddressMutation.isPending ? (
+                          "Processando..."
+                        ) : (
+                          <Button className="w-full">Ir para pagamento</Button>
+                        )}
                       </Button>
                     </div>
                   )}
@@ -171,14 +163,16 @@ export default function Addresses({ shippingAddress, defaultAddressId }: Address
             <CardContent className="pt-4">
               <div className="flex items-center space-x-2">
                 <RadioGroupItem value="add_new" id="add_new" />
-                <Label htmlFor="add_new" className="cursor-pointer">Adicionar novo endereço</Label>
+                <Label htmlFor="add_new" className="cursor-pointer">
+                  Adicionar novo endereço
+                </Label>
               </div>
             </CardContent>
           </Card>
         </RadioGroup>
         {selectedAddress === "add_new" && (
           <div className="mt-6">
-            <h3 className="text-lg font-semibold mb-4">Adicionar novo endereço</h3>
+            <h3 className="mb-4 text-lg font-semibold">Adicionar novo endereço</h3>
             <Form {...form}>
               <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
                 {/* Email */}
@@ -191,7 +185,9 @@ export default function Addresses({ shippingAddress, defaultAddressId }: Address
                       <FormControl>
                         <Input
                           placeholder="Digite seu email"
-                          disabled={createShippingAddressMutation.isPending || updateCartShippingAddressMutation.isPending}
+                          disabled={
+                            createShippingAddressMutation.isPending || updateCartShippingAddressMutation.isPending
+                          }
                           {...field}
                         />
                       </FormControl>
@@ -201,7 +197,7 @@ export default function Addresses({ shippingAddress, defaultAddressId }: Address
                 />
 
                 {/* Primeiro Nome e Sobrenome */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                   <FormField
                     control={form.control}
                     name="firstName"
@@ -211,7 +207,9 @@ export default function Addresses({ shippingAddress, defaultAddressId }: Address
                         <FormControl>
                           <Input
                             placeholder="Digite seu primeiro nome"
-                            disabled={createShippingAddressMutation.isPending || updateCartShippingAddressMutation.isPending}
+                            disabled={
+                              createShippingAddressMutation.isPending || updateCartShippingAddressMutation.isPending
+                            }
                             {...field}
                           />
                         </FormControl>
@@ -228,7 +226,9 @@ export default function Addresses({ shippingAddress, defaultAddressId }: Address
                         <FormControl>
                           <Input
                             placeholder="Digite seu sobrenome"
-                            disabled={createShippingAddressMutation.isPending || updateCartShippingAddressMutation.isPending}
+                            disabled={
+                              createShippingAddressMutation.isPending || updateCartShippingAddressMutation.isPending
+                            }
                             {...field}
                           />
                         </FormControl>
@@ -239,7 +239,7 @@ export default function Addresses({ shippingAddress, defaultAddressId }: Address
                 </div>
 
                 {/* CPF e Celular */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                   <FormField
                     control={form.control}
                     name="cpf"
@@ -252,7 +252,9 @@ export default function Addresses({ shippingAddress, defaultAddressId }: Address
                             mask="_"
                             customInput={Input}
                             placeholder="000.000.000-00"
-                            disabled={createShippingAddressMutation.isPending || updateCartShippingAddressMutation.isPending}
+                            disabled={
+                              createShippingAddressMutation.isPending || updateCartShippingAddressMutation.isPending
+                            }
                             onValueChange={(values) => {
                               field.onChange(values.formattedValue);
                             }}
@@ -275,7 +277,9 @@ export default function Addresses({ shippingAddress, defaultAddressId }: Address
                             mask="_"
                             customInput={Input}
                             placeholder="(00) 00000-0000"
-                            disabled={createShippingAddressMutation.isPending || updateCartShippingAddressMutation.isPending}
+                            disabled={
+                              createShippingAddressMutation.isPending || updateCartShippingAddressMutation.isPending
+                            }
                             onValueChange={(values) => {
                               field.onChange(values.formattedValue);
                             }}
@@ -301,7 +305,9 @@ export default function Addresses({ shippingAddress, defaultAddressId }: Address
                           mask="_"
                           customInput={Input}
                           placeholder="00000-000"
-                          disabled={createShippingAddressMutation.isPending || updateCartShippingAddressMutation.isPending}
+                          disabled={
+                            createShippingAddressMutation.isPending || updateCartShippingAddressMutation.isPending
+                          }
                           onValueChange={(values) => {
                             field.onChange(values.formattedValue);
                           }}
@@ -323,7 +329,9 @@ export default function Addresses({ shippingAddress, defaultAddressId }: Address
                       <FormControl>
                         <Input
                           placeholder="Digite o endereço"
-                          disabled={createShippingAddressMutation.isPending || updateCartShippingAddressMutation.isPending}
+                          disabled={
+                            createShippingAddressMutation.isPending || updateCartShippingAddressMutation.isPending
+                          }
                           {...field}
                         />
                       </FormControl>
@@ -333,7 +341,7 @@ export default function Addresses({ shippingAddress, defaultAddressId }: Address
                 />
 
                 {/* Número e Complemento */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                   <FormField
                     control={form.control}
                     name="number"
@@ -343,7 +351,9 @@ export default function Addresses({ shippingAddress, defaultAddressId }: Address
                         <FormControl>
                           <Input
                             placeholder="Digite o número"
-                            disabled={createShippingAddressMutation.isPending || updateCartShippingAddressMutation.isPending}
+                            disabled={
+                              createShippingAddressMutation.isPending || updateCartShippingAddressMutation.isPending
+                            }
                             {...field}
                           />
                         </FormControl>
@@ -360,7 +370,9 @@ export default function Addresses({ shippingAddress, defaultAddressId }: Address
                         <FormControl>
                           <Input
                             placeholder="Digite o complemento (opcional)"
-                            disabled={createShippingAddressMutation.isPending || updateCartShippingAddressMutation.isPending}
+                            disabled={
+                              createShippingAddressMutation.isPending || updateCartShippingAddressMutation.isPending
+                            }
                             {...field}
                           />
                         </FormControl>
@@ -371,7 +383,7 @@ export default function Addresses({ shippingAddress, defaultAddressId }: Address
                 </div>
 
                 {/* Bairro, Cidade e Estado */}
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
                   <FormField
                     control={form.control}
                     name="neighborhood"
@@ -381,7 +393,9 @@ export default function Addresses({ shippingAddress, defaultAddressId }: Address
                         <FormControl>
                           <Input
                             placeholder="Digite o bairro"
-                            disabled={createShippingAddressMutation.isPending || updateCartShippingAddressMutation.isPending}
+                            disabled={
+                              createShippingAddressMutation.isPending || updateCartShippingAddressMutation.isPending
+                            }
                             {...field}
                           />
                         </FormControl>
@@ -398,7 +412,9 @@ export default function Addresses({ shippingAddress, defaultAddressId }: Address
                         <FormControl>
                           <Input
                             placeholder="Digite a cidade"
-                            disabled={createShippingAddressMutation.isPending || updateCartShippingAddressMutation.isPending}
+                            disabled={
+                              createShippingAddressMutation.isPending || updateCartShippingAddressMutation.isPending
+                            }
                             {...field}
                           />
                         </FormControl>
@@ -415,7 +431,9 @@ export default function Addresses({ shippingAddress, defaultAddressId }: Address
                         <FormControl>
                           <Input
                             placeholder="Digite o estado"
-                            disabled={createShippingAddressMutation.isPending || updateCartShippingAddressMutation.isPending}
+                            disabled={
+                              createShippingAddressMutation.isPending || updateCartShippingAddressMutation.isPending
+                            }
                             {...field}
                           />
                         </FormControl>
@@ -433,8 +451,7 @@ export default function Addresses({ shippingAddress, defaultAddressId }: Address
                 >
                   {createShippingAddressMutation.isPending || updateCartShippingAddressMutation.isPending
                     ? "Salvando..."
-                    : "Salvar endereço"
-                  }
+                    : "Salvar endereço"}
                 </Button>
               </form>
             </Form>

@@ -9,16 +9,12 @@ export default function NotFound() {
         <div className="w-full max-w-md text-center">
           {/* 404 Number */}
           <div className="mb-8">
-            <h1 className="text-primary/20 text-8xl font-bold select-none sm:text-9xl">
-              404
-            </h1>
+            <h1 className="text-primary/20 text-8xl font-bold select-none sm:text-9xl">404</h1>
           </div>
 
           <div className="space-y-6">
             <div className="space-y-2">
-              <h2 className="text-foreground text-2xl font-semibold sm:text-3xl">
-                Página não encontrada
-              </h2>
+              <h2 className="text-foreground text-2xl font-semibold sm:text-3xl">Página não encontrada</h2>
               <p className="text-muted-foreground text-sm sm:text-base">
                 Ops! A página que você está procurando não existe ou foi movida.
               </p>
