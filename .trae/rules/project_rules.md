@@ -51,3 +51,4 @@ soluções de alta qualidade e fáceis de manter.
 - SEMPRE crie e exporte uma função que retorne a query key de uma query e mutation key
   de uma mutation.
 - SEMPRE use o componente Image do Next.js quando for necessário para colocar imagens.
+- NUNCA peça para rodar o comando `npm run dev` para verificar se as mudanças estão funcionando.
