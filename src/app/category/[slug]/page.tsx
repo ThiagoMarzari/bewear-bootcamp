@@ -28,8 +28,6 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
     },
   });
 
-  console.log(products);
-
   return (
     <div className="mx-auto flex w-full max-w-7xl flex-col gap-6 p-5">
       <h2 className="text-2xl font-semibold">{category.name}</h2>
