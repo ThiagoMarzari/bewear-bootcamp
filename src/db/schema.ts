@@ -1,6 +1,8 @@
 import { relations } from "drizzle-orm";
 import { boolean, integer, pgEnum, pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core";
 
+export const rolesEnum = pgEnum("role", ["user", "admin"]);
+
 export const userTable = pgTable("user", {
   id: text("id").primaryKey(),
   name: text("name").notNull(),
@@ -15,6 +17,7 @@ export const userTable = pgTable("user", {
   updatedAt: timestamp("updated_at")
     .$defaultFn(() => /* @__PURE__ */ new Date())
     .notNull(),
+  role: rolesEnum().notNull().default("user"),
 });
 
 export const userRelations = relations(userTable, ({ many, one }) => ({
