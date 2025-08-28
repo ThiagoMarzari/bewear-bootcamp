@@ -1,0 +1,50 @@
+import Image from "next/image";
+import Link from "next/link";
+
+import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogTitle,
+} from "@/components/ui/dialog";
+
+export default function CheckoutSuccessPage() {
+  return (
+    <>
+      <Dialog open={true}>
+        <DialogContent className="text-center">
+          <Image
+            src="/illustration.svg"
+            alt="Success"
+            width={300}
+            height={300}
+            className="mx-auto"
+          />
+          <DialogTitle className="mt-4 text-2xl">Pedido efetuado!</DialogTitle>
+          <DialogDescription className="font-medium">
+            Seu pedido foi efetuado com sucesso. Você pode acompanhar o status
+            na seção de “Meus Pedidos”.
+          </DialogDescription>
+
+          <DialogFooter>
+            <Button className="rounded-full" size="lg" asChild>
+              <Link href="/my-orders">
+                Ver meus pedidos
+              </Link>
+            </Button>
+            <Button
+              className="rounded-full"
+              variant="outline"
+              size="lg"
+              asChild
+            >
+              <Link href="/">Voltar para a loja</Link>
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </>
+  );
+}
