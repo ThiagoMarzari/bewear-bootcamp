@@ -42,7 +42,7 @@ export default async function IdentificationPage() {
 
   return (
     <div>
-      <div className="space-y-4 px-5">
+      <div className="space-y-4 px-5 lg:px-8 max-w-7xl mx-auto">
         <Addresses shippingAddress={shippingAddress} defaultAddressId={cart.shippingAddressId} />
         <CartSummary cart={cart} />
       </div>

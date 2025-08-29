@@ -1,14 +1,15 @@
 "use client";
 
 import { ShoppingBasketIcon } from "lucide-react";
-import Link from "next/link";
-import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 
 import { useCart } from "@/hooks/queries/use-cart";
 import { authClient } from "@/lib/auth-client";
 import { formatCurrency } from "@/utils/money";
 
 import { Button } from "../ui/button";
+import { LoadingSpinner } from "../ui/loading-spinner";
 import { ScrollArea } from "../ui/scroll-area";
 import { Separator } from "../ui/separator";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "../ui/sheet";
@@ -18,6 +19,8 @@ import { CartItem } from "./cart-item";
 export default function Cart() {
   const { data: session } = authClient.useSession();
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+  const [isNavigating, setIsNavigating] = useState(false);
+  const router = useRouter();
 
   // Só busca o carrinho se o usuário estiver logado
   const { data: cart, isPending: cartIsLoading } = useCart({
@@ -36,6 +39,30 @@ export default function Cart() {
     }
     setIsSheetOpen(true);
   };
+
+  const handleFinishOrderClick = async () => {
+    setIsNavigating(true);
+    setIsSheetOpen(false);
+
+    // Pequeno delay para permitir que o sheet feche suavemente
+    setTimeout(() => {
+      router.push("/cart/identification");
+    }, 100);
+  };
+
+  // Prefetch da página de identificação quando o carrinho tiver itens
+  useEffect(() => {
+    if (cart?.items && cart.items.length > 0) {
+      router.prefetch("/cart/identification");
+    }
+  }, [cart?.items, router]);
+
+  // Reseta o estado de navegação quando o sheet for fechado
+  useEffect(() => {
+    if (!isSheetOpen) {
+      setIsNavigating(false);
+    }
+  }, [isSheetOpen]);
 
   return (
     <>
@@ -104,8 +131,19 @@ export default function Cart() {
                   <p>{formatCurrency(cart?.totalPriceInCents ?? 0)}</p>
                 </div>
 
-                <Button className="mt-5 rounded-full" asChild>
-                  <Link href="/cart/identification">Finalizar compra</Link>
+                <Button
+                  className="mt-5 rounded-full"
+                  onClick={handleFinishOrderClick}
+                  disabled={isNavigating}
+                >
+                  {isNavigating ? (
+                    <>
+                      <LoadingSpinner className="mr-2 h-4 w-4" />
+                      Carregando...
+                    </>
+                  ) : (
+                    "Finalizar compra"
+                  )}
                 </Button>
               </div>
             )}

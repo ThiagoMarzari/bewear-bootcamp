@@ -6,6 +6,7 @@ import { parseAsInteger, useQueryState } from "nuqs";
 import { Button } from "@/components/ui/button";
 
 import AddToCartButton from "./add-to-cart-button";
+import BuyNowButton from "./buy-now-button";
 
 interface ProductActionsProps {
   productVariantId: string;
@@ -52,7 +53,10 @@ export default function ProductActions({
           productVariantId={productVariantId}
           quantity={quantity}
         />
-        <Button className="rounded-full">Comprar agora</Button>
+        <BuyNowButton
+          productVariantId={productVariantId}
+          quantity={quantity}
+        />
       </div>
     </>
   );
