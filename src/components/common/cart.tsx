@@ -11,7 +11,7 @@ import { formatCurrency } from "@/utils/money";
 import { Button } from "../ui/button";
 import { ScrollArea } from "../ui/scroll-area";
 import { Separator } from "../ui/separator";
-import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "../ui/sheet";
+import { Sheet, SheetContent, SheetHeader, SheetTitle } from "../ui/sheet";
 import AuthModal from "./auth-modal";
 import { CartItem } from "./cart-item";
 

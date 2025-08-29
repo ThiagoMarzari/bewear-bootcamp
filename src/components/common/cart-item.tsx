@@ -51,13 +51,24 @@ export function CartItem({
   };
 
   return (
-    <div className="flex items-center justify-between">
-      <div className="flex items-center gap-3">
-        <Image src={productVariantImageUrl} alt={productVariantName} width={78} height={78} className="rounded-lg" />
-        <div className="flex flex-col gap-1">
-          <p className="text-sm font-semibold">{productName}</p>
-          <p className="text-muted-foreground text-xs font-medium">{productVariantName}</p>
-          <div className="flex w-[100px] items-center justify-between rounded-lg border px-2">
+    <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+      <div className="flex items-center gap-2 sm:gap-3">
+        <Image
+          src={productVariantImageUrl}
+          alt={productVariantName}
+          width={60}
+          height={60}
+          className="rounded-lg sm:h-[78px] sm:w-[78px]"
+        />
+        <div className="flex flex-col gap-1 min-w-0 flex-1">
+          <p className="text-sm font-semibold truncate">{productName}</p>
+          <p className="text-muted-foreground text-xs font-medium truncate">{productVariantName}</p>
+        </div>
+      </div>
+
+      <div className="flex items-center justify-between sm:flex-col sm:items-end sm:gap-2">
+        <div className="flex items-center gap-2 sm:order-2">
+          <div className="flex w-[90px] sm:w-[100px] items-center justify-between rounded-lg border px-2">
             <Button size="icon" className="h-4 w-4" variant="ghost" onClick={handleDecreaseQuantityClick}>
               <MinusIcon />
             </Button>
@@ -70,14 +81,12 @@ export function CartItem({
               <PlusIcon />
             </Button>
           </div>
+          <Button variant="outline" size="icon" onClick={handleRemoveProductFromCart}>
+            <TrashIcon size={16} />
+          </Button>
         </div>
-      </div>
-      <div className="flex flex-col items-end justify-center gap-1">
-        <Button variant="outline" size="icon" onClick={handleRemoveProductFromCart}>
-          <TrashIcon size={16} />
-        </Button>
 
-        <p className="text-sm font-bold">{formatCurrency(productVariantPriceInCents * quantity)}</p>
+        <p className="text-sm font-bold sm:order-1">{formatCurrency(productVariantPriceInCents * quantity)}</p>
       </div>
     </div>
   );
