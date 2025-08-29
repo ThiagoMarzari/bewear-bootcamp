@@ -73,7 +73,7 @@ export function HeaderClient({ user }: HeaderClientProps) {
             {user?.role === "admin" && (
               <div className="mt-4 space-y-2">
                 <Button asChild variant="ghost" className="w-full justify-start">
-                  <Link href="/admin">Dashboard</Link>
+                  <Link href="/dashboard">Dashboard</Link>
                 </Button>
               </div>
             )}
